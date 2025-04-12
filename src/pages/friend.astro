@@ -8,7 +8,7 @@ import FriendCard from "@/components/mdx/FriendCard.astro";
 
 <BaseLayout title="Friends">
   <MainCard
-    title="Friends & Resources"
+    title="Friends"
     description="A collection of links to friends, technologies, and contributors to the Frosti project."
     textOverlay="FRIENDS"
     infoIcon="lucide:link"
@@ -23,141 +23,56 @@ import FriendCard from "@/components/mdx/FriendCard.astro";
 
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           <FriendCard
-            name="Lyme Blurred"
-            avatar="https://github.com/lymeblurred.png"
-            description="Building, breaking, and learning daily | A copy of EveSunMaple"
-            url="https://github.com/lymeblurred"
-            type="friend"
-          />
-          <FriendCard
-            name="梦凌汐"
-            avatar="https://github.com/MeowLynxSea.png"
-            description="来自星辰边缘的猫猫~爱好是睡觉awa"
-            url="https://github.com/MeowLynxSea"
-            type="friend"
-          />
-          <FriendCard
-            name="颜涂楷睿"
-            avatar="https://github.com/SnowFoxqwq.png"
-            description="你好，我是雪狐~"
-            url="https://github.com/SnowFoxqwq"
-            type="friend"
-          />
-        </div>
-      </section>
-
-      <!-- Contributors Section -->
-      <section>
-        <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
-          <Icon name="lucide:git-pull-request" class="w-6 h-6 text-primary" />
-          <span>Contributors</span>
-        </h2>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          <FriendCard
-            name="SunMaple"
-            avatar="https://github.com/EveSunMaple.png"
-            description=""
+            name="EveSunMaple"
+            avatar="https://www.saroprock.com/profile.webp"
+            description="Astro Frosti模板项目作者"
             url="https://github.com/EveSunMaple"
-            type="contributor"
-          />
-          <FriendCard
-            name="Loping151"
-            avatar="https://github.com/Loping151.png"
-            description=""
-            url="https://github.com/Loping151"
-            type="contributor"
-          />
-          <FriendCard
-            name="Tianxiang Roxiyater"
-            avatar="https://github.com/TNXG.png"
-            description="明日尚未到来，希望凝于心上"
-            url="https://github.com/TNXG"
-            type="contributor"
-          />
-          <FriendCard
-            name="Yaoqx"
-            avatar="https://github.com/YaoqxCN.png"
-            description="A lazy junior high school student who likes coding!"
-            url="https://github.com/YaoqxCN"
-            type="contributor"
-          />
-          <FriendCard
-            name="Yao Tutu"
-            avatar="https://github.com/yaotutu.png"
-            description="Graduated student of SHMTU, CS major."
-            url="https://github.com/yaotutu"
-            type="contributor"
-          />
-          <FriendCard
-            name="WRXinYue"
-            avatar="https://github.com/WRXinYue.png"
-            description="Technology is not just a tool; it is a joy and an art."
-            url="https://github.com/WRXinYue"
-            type="contributor"
+            type="friend"
           />
         </div>
       </section>
-
-      <!-- Useful Resources Section -->
-      <section>
-        <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
-          <Icon name="lucide:bookmark" class="w-6 h-6 text-primary" />
-          <span>Useful Resources</span>
-        </h2>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <LinkCard
-            title="Astro Documentation"
-            desc="The official documentation for Astro, covering everything from getting started to advanced techniques."
-            url="https://docs.astro.build"
-            icon="simple-icons:astro"
-            categories={["Docs", "Learning", "Reference"]}
-          />
-
-          <LinkCard
-            title="Tailwind CSS Documentation"
-            desc="Learn how to use Tailwind's utility classes to style your website without writing CSS."
-            url="https://tailwindcss.com/docs"
-            icon="simple-icons:tailwindcss"
-            categories={["Docs", "CSS", "Reference"]}
-          />
-
-          <LinkCard
-            title="DaisyUI Components"
-            desc="Browse DaisyUI's component library and learn how to use them in your project."
-            url="https://daisyui.com/components/"
-            icon="simple-icons:daisyui"
-            categories={["Components", "UI", "Reference"]}
-          />
-
-          <LinkCard
-            title="TypeScript Handbook"
-            desc="The TypeScript Handbook is a comprehensive guide to the TypeScript language."
-            url="https://www.typescriptlang.org/docs/handbook/intro.html"
-            icon="simple-icons:typescript"
-            categories={["Docs", "TypeScript", "Reference"]}
-          />
-        </div>
-      </section>
-
       <div class="divider my-8">
         <Icon name="lucide:heart" class="w-10 h-10 text-primary" />
       </div>
 
-      <div class="text-center">
-        <p class="text-base-content/80 mb-4">
-          Want to be featured on this page? Feel free to reach out or contribute to the project!
-        </p>
-        <a
-          href="https://github.com/EveSunMaple/Frosti"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="btn btn-primary gap-2"
-        >
-          <Icon name="lucide:github" class="w-5 h-5" />
-          <span>Contribute on GitHub</span>
-        </a>
+      <div class="text-left"> <!-- 修改为text-left实现左对齐 -->
+        <div class="prose max-w-none"> <!-- 添加prose类保持文本样式一致 -->
+          <h3 class="text-lg font-bold mb-4">须知⚠️</h3>
+          <p>请您在申请友情链接之前仔细阅读并同意以下几条规则：</p>
+          <ul class="list-disc pl-6 space-y-2">
+            <li>1. 🚫您的网站内不得含有：包括但不限于色情、血腥、暴力、犯罪、博彩以及其他违反<span style="color:red">中华人民共和国</span>所有法律的内容及链接。</li>
+            <li>2. 😵‍💫您的网站内不能含有广告、搬运、导航、资源分享等非个人博客的网站内容。</li>
+            <li>3. 🔒请确保您的网站已接入HTTPS。</li>
+            <li>4. 仅支持博客类站点且要有一定数量的原创文章。</li>
+          </ul>
+          
+          <h3 class="text-lg font-bold mt-6 mb-2">本站友情链接信息：</h3>
+          <ul class="list-none pl-0 space-y-1">
+            <li>网站名称：玖字节的博客</li>
+            <li>网站介绍：偏我来时不逢春</li>
+            <li>网站链接：<a href="https://blog.ninebytes.top" class="link link-primary">https://blog.ninebytes.top</a></li>
+            <li>图标链接：<a href="https://blog.ninebytes.top/profile.webp" class="link link-primary">https://blog.ninebytes.top/profile.webp</a></li>
+          </ul>
+          <p class="mt-2">申请格式参考以上</p>
+          
+          <h3 class="text-lg font-bold mt-6 mb-2">申请友情链接方式</h3>
+          <p>发送邮件至<a href="mailto:f0rever@aliyun.com" class="link link-primary">f0rever@aliyun.com</a></p>
+          
+          <h3 class="text-lg font-bold mt-6 mb-2">最后</h3>
+          <p>🎉 欢迎各位站长前来添加！所有友情链接申请均会在48Hours内回复并填写。</p>
+        </div>
+
+        <div class="text-center mt-8"> <!-- 保持按钮居中 -->
+          <a
+            href="https://github.com/EveSunMaple/Frosti"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn btn-primary gap-2"
+          >
+            <Icon name="lucide:github" class="w-5 h-5" />
+            <span>Contribute on GitHub</span>
+          </a>
+        </div>
       </div>
     </div>
   </MainCard>

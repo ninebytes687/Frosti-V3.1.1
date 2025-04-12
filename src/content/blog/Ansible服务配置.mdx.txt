@@ -1,0 +1,670 @@
+---
+title: "Ansible服务配置"
+description: "Ansible服务配置"
+pubDate: "Mar 21 2025"
+image: "https://s21.ax1x.com/2025/03/21/pE0V9C8.png"
+categories:
+  - tech
+tags:
+  - Linux
+  - Rocky Linux
+---
+
+import Collapse from "../../components/mdx/Collapse.astro"
+import Diff from "../../components/mdx/Diff.astro"
+import Error from "../../components/mdx/Error.astro";
+import Info from "../../components/mdx/Info.astro";
+import Kbd from "../../components/mdx/Kbd.astro"
+import Success from "../../components/mdx/Success.astro";
+import Warning from "../../components/mdx/Warning.astro";
+import TimeLine from "../../components/mdx/TimeLine.astro";
+import LinkCard from "../../components/mdx/LinkCard.astro";
+
+# Ansible简介
+Ansible是一款开源的​自动化工具，由RedHat开发并维护，基于Python语言实现。它专注于简化 ​IT 基础设施的配置管理、应用部署和​任务自动化，遵循“基础设施即代码（IaC）”理念，通过声明式的语法实现高效运维。  
+**核心特性：**  
+ 1. 无客户端架构：通过 SSH（Linux）或 WinRM（Windows）直接管理节点，无需在目标机器上安装额外客户端，并且被管理节点会将结果返回至管理节点。  
+ 2. ​YAML 语法：使用易读的YAML文件（Playbook）定义自动化任务，降低学习成本。  
+ 3. ​幂等性（Idempotent）​：任务重复执行不会改变系统最终状态，避免意外错误。  
+ 4. ​模块化设计：提供上千个内置模块（如 copy, service, template），支持自定义扩展。  
+
+**核心模块：**
+- Inventory​：定义被管理的主机列表及分组，又被称为“资源池”或“资产”。  
+- ​Ad-Hoc：快速执行单条命令（如 ansible all -m ping 测试连通性）。  
+- ​Playbook：YAML格式的自动化流程脚本，描述任务集和配置策略。  
+- ​Role​：可复用的任务集合，实现逻辑分层与代码复用。  
+
+<Info>无论是Ad-Hoc或PlayBook所执行的某些功能不是由某些命令执行的，而是由一个个已经封装好的模块去执行的。比如复制功能的COPY模块；实现Ping功能的PING模块；执行Shell脚本的SHELL模块等等。</Info>
+
+**先决条件：**  
+|管理节点|被管理节点|
+|---|---|
+|OpenSSH|OpenSSH|
+|Python>=2.6|Python>=2.4|
+|Ansible|/|
+
+# 安装EPEL仓库
+使用`wget`命令下载EPEL的rpm包：`wget https://mirrors.aliyun.com/epel/epel-release-latest-9.noarch.rpm`
+```
+[root@server /]# wget https://mirrors.aliyun.com/epel/epel-release-latest-9.noarch.rpm
+--2025-03-21 19:54:45--  https://mirrors.aliyun.com/epel/epel-release-latest-9.noarch.rpm
+Resolving mirrors.aliyun.com (mirrors.aliyun.com)... 123.182.95.105, 106.8.159.240, 106.8.159.237, ...
+Connecting to mirrors.aliyun.com (mirrors.aliyun.com)|123.182.95.105|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 18952 (19K) [application/x-rpm]
+Saving to: ‘epel-release-latest-9.noarch.rpm’
+
+epel-release-latest-9.noarch.r 100%[===================================================>]  18.51K  --.-KB/s    in 0s      
+
+2025-03-21 19:54:45 (61.7 MB/s) - ‘epel-release-latest-9.noarch.rpm’ saved [18952/18952]
+```
+然后使用`dnf`命令安装下载好后的rpm包：`dnf install ./epel-release-latest-9.noarch.rpm`
+```
+[root@server /]# dnf install ./epel-release-latest-9.noarch.rpm
+Last metadata expiration check: 0:04:28 ago on Fri 21 Mar 2025 07:50:43 PM CST.
+Dependencies resolved.
+===========================================================================================================================
+ Package                        Architecture             Version                      Repository                      Size
+===========================================================================================================================
+Installing:
+ epel-release                   noarch                   9-9.el9                      @commandline                    19 k
+
+Transaction Summary
+===========================================================================================================================
+Install  1 Package
+
+Total size: 19 k
+Installed size: 26 k
+Is this ok [y/N]: y
+Downloading Packages:
+Running transaction check
+Transaction check succeeded.
+Running transaction test
+Transaction test succeeded.
+Running transaction
+  Preparing        :                                                                                                   1/1 
+  Installing       : epel-release-9-9.el9.noarch                                                                       1/1 
+  Running scriptlet: epel-release-9-9.el9.noarch                                                                       1/1 
+Many EPEL packages require the CodeReady Builder (CRB) repository.
+It is recommended that you run /usr/bin/crb enable to enable the CRB repository.
+
+  Verifying        : epel-release-9-9.el9.noarch                                                                       1/1 
+
+Installed:
+  epel-release-9-9.el9.noarch                                                                                              
+
+Complete!
+
+```
+然后将EPEL仓库源替换为阿里EPEL源：  
+```
+sed -i.bak \
+    -e 's|^#baseurl=|baseurl=|g' \
+    -e 's|^metalink|#metalink|g' \
+    -e 's|https://download.example/pub/epel|https://mirrors.aliyun.com/epel|g' \
+    /etc/yum.repos.d/epel*.repo
+```
+如果在替换EPEL源时报错可以尝试强制重装EPEL rpm包。  
+**报错信息：**  
+```
+[root@server /]# sed -e 's|^#baseurl=|baseurl=|g' \
+         -e 's|^metalink|#metalink|g' \
+         -e 's|https://download.example/pub/epel|https://mirrors.aliyun.com/epel|g' \
+         -i /etc/yum.repos.d/epel*.repo
+sed: can't read /etc/yum.repos.d/epel*.repo: No such file or directory
+# 已成功安装EPEL但EPEL文件丢失；
+```
+强制重装EPEL rpm包：  
+`dnf reinstall ./epel-release-latest-9.noarch.rpm`
+```
+[root@server /]# dnf reinstall ./epel-release-latest-9.noarch.rpm
+Last metadata expiration check: 0:10:53 ago on Fri 21 Mar 2025 07:50:43 PM CST.
+Dependencies resolved.
+===========================================================================================================================
+ Package                        Architecture             Version                      Repository                      Size
+===========================================================================================================================
+Reinstalling:
+ epel-release                   noarch                   9-9.el9                      @commandline                    19 k
+
+Transaction Summary
+===========================================================================================================================
+
+Total size: 19 k
+Installed size: 26 k
+Is this ok [y/N]: y
+Downloading Packages:
+Running transaction check
+Transaction check succeeded.
+Running transaction test
+Transaction test succeeded.
+Running transaction
+  Preparing        :                                                                                                   1/1 
+  Reinstalling     : epel-release-9-9.el9.noarch                                                                       1/2 
+  Running scriptlet: epel-release-9-9.el9.noarch                                                                       1/2 
+  Cleanup          : epel-release-9-9.el9.noarch                                                                       2/2 
+  Running scriptlet: epel-release-9-9.el9.noarch                                                                       2/2 
+  Verifying        : epel-release-9-9.el9.noarch                                                                       1/2 
+  Verifying        : epel-release-9-9.el9.noarch                                                                       2/2 
+
+Reinstalled:
+  epel-release-9-9.el9.noarch                                                                                              
+
+Complete!
+```
+验证阿里云EPEL源：  
+`grep "mirrors.aliyun.com" /etc/yum.repos.d/epel*.repo`
+```
+[root@server /]# grep "mirrors.aliyun.com" /etc/yum.repos.d/epel*.repo
+/etc/yum.repos.d/epel-testing.repo:baseurl=https://mirrors.aliyun.com/epel/testing/9/Everything/$basearch/
+/etc/yum.repos.d/epel-testing.repo:baseurl=https://mirrors.aliyun.com/epel/testing/9/Everything/$basearch/debug/
+/etc/yum.repos.d/epel-testing.repo:baseurl=https://mirrors.aliyun.com/epel/testing/9/Everything/source/tree/
+```
+确认EPEL文件已生成：  
+`ls /etc/yum.repos.d/epel*.repo`
+```
+[root@server /]# ls /etc/yum.repos.d/epel*.repo
+/etc/yum.repos.d/epel-cisco-openh264.repo  /etc/yum.repos.d/epel.repo  /etc/yum.repos.d/epel-testing.repo
+```
+清理旧缓存：dnf clean all  
+生成新缓存：dnf makecache  
+测试仓库可用性：dnf update  
+```
+[root@server /]# dnf clean all && dnf makecache && dnf update
+17 files removed
+Error: Cannot find a valid baseurl for repo: epel-cisco-openh264
+Rocky Linux 9 - BaseOS                                                                      29 MB/s | 2.2 MB     00:00    
+Rocky Linux 9 - AppStream                                                                   38 MB/s | 7.9 MB     00:00    
+Ignoring repositories: epel-cisco-openh264
+Metadata cache created.
+Error: Cannot find a valid baseurl for repo: epel-cisco-openh264
+Ignoring repositories: epel-cisco-openh264
+Last metadata expiration check: 0:00:05 ago on Fri 21 Mar 2025 08:25:55 PM CST.
+Dependencies resolved.
+Nothing to do.
+Complete!
+```
+可以看到上面的输出中有2条有关epel-cisco-openh264的报错信息。  
+该仓库用于提供​Cisco的OpenH264编解码器​（主要用于WebRTC视频通话等场景），但阿里云可能未同步此仓库，导致其baseurl配置失效。  
+虽然不会影响后续Ansible的安装，但也可以禁用epel-cisco-openh264仓库：  
+`sed -i 's/enabled=1/enabled=0/g' /etc/yum.repos.d/epel-cisco-openh264.repo`。  
+清理缓存并生成新缓存：  
+`rm -rf /var/cache/dnf && dnf clean all && sudo dnf makecache`。  
+
+# 安装Ansible
+**dnf安装：**
+使用`dnf install ansible-core`命令安装Ansible。  
+```
+[root@server /]# dnf install ansible-core
+Last metadata expiration check: 0:00:28 ago on Fri 21 Mar 2025 08:30:39 PM CST.
+Dependencies resolved.
+===========================================================================================================================
+ Package                             Architecture          Version                          Repository                Size
+===========================================================================================================================
+Installing:
+ ansible-core                        x86_64                1:2.14.14-1.el9                  AppStream                2.2 M
+Installing dependencies:
+ git-core                            x86_64                2.43.0-1.el9                     AppStream                4.4 M
+ python3-cffi                        x86_64                1.14.5-5.el9                     baseos                   241 k
+ python3-cryptography                x86_64                36.0.1-4.el9                     baseos                   1.2 M
+ python3-packaging                   noarch                20.9-5.el9                       AppStream                 69 k
+ python3-ply                         noarch                3.11-14.el9.0.1                  baseos                   103 k
+ python3-pycparser                   noarch                2.20-6.el9                       baseos                   124 k
+ python3-pyparsing                   noarch                2.4.7-9.el9                      baseos                   150 k
+ python3-resolvelib                  noarch                0.5.4-5.el9                      AppStream                 29 k
+ sshpass                             x86_64                1.09-4.el9                       AppStream                 27 k
+
+Transaction Summary
+===========================================================================================================================
+Install  10 Packages
+
+Total size: 8.4 M
+Installed size: 38 M
+Is this ok [y/N]: y
+Downloading Packages:
+Running transaction check
+Transaction check succeeded.
+Running transaction test
+Transaction test succeeded.
+Running transaction
+  Preparing        :                                                                                                   1/1 
+  Installing       : git-core-2.43.0-1.el9.x86_64                                                                     1/10 
+  Installing       : sshpass-1.09-4.el9.x86_64                                                                        2/10 
+  Installing       : python3-resolvelib-0.5.4-5.el9.noarch                                                            3/10 
+  Installing       : python3-ply-3.11-14.el9.0.1.noarch                                                               4/10 
+  Installing       : python3-pycparser-2.20-6.el9.noarch                                                              5/10 
+  Installing       : python3-cffi-1.14.5-5.el9.x86_64                                                                 6/10 
+  Installing       : python3-cryptography-36.0.1-4.el9.x86_64                                                         7/10 
+  Installing       : python3-pyparsing-2.4.7-9.el9.noarch                                                             8/10 
+  Installing       : python3-packaging-20.9-5.el9.noarch                                                              9/10 
+  Installing       : ansible-core-1:2.14.14-1.el9.x86_64                                                             10/10 
+  Running scriptlet: ansible-core-1:2.14.14-1.el9.x86_64                                                             10/10 
+  Verifying        : python3-pyparsing-2.4.7-9.el9.noarch                                                             1/10 
+  Verifying        : python3-cryptography-36.0.1-4.el9.x86_64                                                         2/10 
+  Verifying        : python3-cffi-1.14.5-5.el9.x86_64                                                                 3/10 
+  Verifying        : python3-ply-3.11-14.el9.0.1.noarch                                                               4/10 
+  Verifying        : python3-pycparser-2.20-6.el9.noarch                                                              5/10 
+  Verifying        : python3-packaging-20.9-5.el9.noarch                                                              6/10 
+  Verifying        : python3-resolvelib-0.5.4-5.el9.noarch                                                            7/10 
+  Verifying        : sshpass-1.09-4.el9.x86_64                                                                        8/10 
+  Verifying        : git-core-2.43.0-1.el9.x86_64                                                                     9/10 
+  Verifying        : ansible-core-1:2.14.14-1.el9.x86_64                                                             10/10 
+
+Installed:
+  ansible-core-1:2.14.14-1.el9.x86_64        git-core-2.43.0-1.el9.x86_64           python3-cffi-1.14.5-5.el9.x86_64       
+  python3-cryptography-36.0.1-4.el9.x86_64   python3-packaging-20.9-5.el9.noarch    python3-ply-3.11-14.el9.0.1.noarch     
+  python3-pycparser-2.20-6.el9.noarch        python3-pyparsing-2.4.7-9.el9.noarch   python3-resolvelib-0.5.4-5.el9.noarch  
+  sshpass-1.09-4.el9.x86_64                 
+
+Complete!
+```
+验证安装：  
+`ansible --version`
+```
+[root@server /]# ansible --version
+ansible [core 2.14.14]
+  # Ansible配置文件位置，特殊情况下才会修改；
+  config file = /etc/ansible/ansible.cfg
+  # 配置模块位置[root用户路径；其他用户路径]；
+  configured module search path = ['/root/.ansible/plugins/modules', '/usr/share/ansible/plugins/modules']
+  # Ansible python模块位置；
+  ansible python module location = /usr/lib/python3.9/site-packages/ansible
+  ansible collection location = /root/.ansible/collections:/usr/share/ansible/collections
+  executable location = /usr/bin/ansible
+  # Ansible使用的Python版本；
+  python version = 3.9.18 (main, Jan 24 2024, 00:00:00) [GCC 11.4.1 20231218 (Red Hat 11.4.1-3)] (/usr/bin/python3)
+  jinja version = 3.1.2
+  libyaml = True
+```
+**pip安装：**  
+安装Python3和pip：`dnf install python3 python3-pip`。  
+pip安装ansible`pip3 install ansible`。
+
+# 建立信任关系
+Ansible使用的是SSH协议控制被管理节点的，就需要把管理节点的公钥给到被管理节点。  
+**创建密钥对：**  
+管理节点创建密钥对：`ssh-keygen -t rsa`。
+```
+[root@server ~]# ssh-keygen -t rsa
+Generating public/private rsa key pair.
+Enter file in which to save the key (/root/.ssh/id_rsa): 
+Enter passphrase (empty for no passphrase): 
+Enter same passphrase again: 
+Your identification has been saved in /root/.ssh/id_rsa
+Your public key has been saved in /root/.ssh/id_rsa.pub
+The key fingerprint is:
+SHA256:3s7c0wCEO/h2Tt3bsU28/jeqo6biqUEwzbbH0WQFMDk root@server
+The key's randomart image is:
++---[RSA 3072]----+
+|     oo+oo       |
+|  o  E= . .      |
+| o + ..o o       |
+|  + o o o .      |
+|   o o .S. o . . |
+|  . .  .o.o o ..o|
+|   .   ..+.  o +=|
+|    ...  =.o. o++|
+|   .oo..o.=.+oo.=|
++----[SHA256]-----+
+```
+验证密钥对：`ls ~/.ssh`。  
+```
+[root@server ~]# ls ~/.ssh
+id_rsa  id_rsa.pub
+```
+**传输公钥至被管理节点：**
+使用命令：`ssh-copy-id root@192.168.201.12`。  
+- 请将"root@192.168.201.12"替换成你当前所在环境的用户名及主机地址；
+```
+[root@server ~]# ssh-copy-id root@192.168.201.12
+/usr/bin/ssh-copy-id: INFO: Source of key(s) to be installed: "/root/.ssh/id_rsa.pub"
+The authenticity of host '192.168.201.12 (192.168.201.12)' can't be established.
+ED25519 key fingerprint is SHA256:2HrA0fsMIcuhKDEX/TOeNb7DcuMG4nNZlSLJ5fS4LdE.
+This key is not known by any other names
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+/usr/bin/ssh-copy-id: INFO: attempting to log in with the new key(s), to filter out any that are already installed
+/usr/bin/ssh-copy-id: INFO: 1 key(s) remain to be installed -- if you are prompted now it is to install the new keys
+root@192.168.201.12's password: 
+
+Number of key(s) added: 1
+
+Now try logging into the machine, with:   "ssh 'root@192.168.201.12'"
+and check to make sure that only the key(s) you wanted were added.
+
+```
+测试是否可以免密SSH登录：`ssh root@192.168.201.12`。
+```
+[root@server ~]# ssh root@192.168.201.12
+Activate the web console with: systemctl enable --now cockpit.socket
+
+Last login: Fri Mar 21 19:37:00 2025 from 192.168.201.1
+[root@slave1 ~]# exit
+logout
+Connection to 192.168.201.12 closed.
+```
+另一台被管理节点也是同样传输公钥。  
+使用命令：`ssh-copy-id root@192.168.201.13`。  
+```
+[root@server ~]# ssh-copy-id root@192.168.201.13
+/usr/bin/ssh-copy-id: INFO: Source of key(s) to be installed: "/root/.ssh/id_rsa.pub"
+The authenticity of host '192.168.201.13 (192.168.201.13)' can't be established.
+ED25519 key fingerprint is SHA256:2HrA0fsMIcuhKDEX/TOeNb7DcuMG4nNZlSLJ5fS4LdE.
+This host key is known by the following other names/addresses:
+    ~/.ssh/known_hosts:1: 192.168.201.12
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+/usr/bin/ssh-copy-id: INFO: attempting to log in with the new key(s), to filter out any that are already installed
+/usr/bin/ssh-copy-id: INFO: 1 key(s) remain to be installed -- if you are prompted now it is to install the new keys
+root@192.168.201.13's password: 
+
+Number of key(s) added: 1
+
+Now try logging into the machine, with:   "ssh 'root@192.168.201.13'"
+and check to make sure that only the key(s) you wanted were added.
+
+```
+
+# Ansible命令展示
+**管理节点测试与被原理节点连通性：**
+`ansible all -i 192.168.201.12,192.168.201.13 -m ping`。  
+命令参数解释：  
+- all：匹配所有指定的所有资产；
+- -i：使用Inventory模块，即主机列表；  
+- -m：指定模块为ping；  
+```
+[root@server ~]# ansible all -i 192.168.201.12,192.168.201.13 -m ping
+# 返回结果的主机地址 | 状态:[通过]
+192.168.201.13 | SUCCESS => {
+    "ansible_facts": {
+        # 使用的Python解释器；
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    # 改变字段为flase；只进行ping操作，没有对节点进行实际上的改变操作；
+    "changed": false,
+    # ping字段为pong表示测通；
+    "ping": "pong"
+}
+# 返回结果的主机地址 | 状态:[通过]
+192.168.201.12 | SUCCESS => {
+    "ansible_facts": {
+        # 使用的Python解释器；
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    # 改变字段为flase；只进行ping操作，没有对节点进行实际上的改变操作；
+    "changed": false,
+    # ping字段为pong表示测通；
+    "ping": "pong"
+}
+```
+- 返回的结果不是按照-i参数顺序来的，谁先完成操作将结果返回至管理节点谁先展示。  
+
+如果只对1台节点测通，那依然要对主机地址后边加英文逗号：  
+`ansible all -i 192.168.201.12, -m ping`
+```
+[root@server ~]# ansible all -i 192.168.201.12, -m ping
+# 返回结果的主机地址 | 状态:[通过]
+192.168.201.12 | SUCCESS => {
+    "ansible_facts": {
+        # 使用的Python解释器；
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    # 改变字段为flase；只进行ping操作，没有对节点进行实际上的改变操作；
+    "changed": false,
+    # ping字段为pong表示测通；
+    "ping": "pong"
+}
+```
+**传输管理节点文件至被管理节点：**  
+创建测试文件：`[root@server ~]# touch /tmp/test.conf`。  
+使用命令：
+```
+ansible all -i 192.168.201.12,192.168.201.13 -m copy -a "src=/tmp/test.conf dest=/tmp/test.conf"
+```
+命令参数解释：  
+- all：匹配所有指定的所有资产；
+- -i：Ansible的资产，即被管理节点列表。可以是元组可以是文件名；
+- -m：指定要运行的模块，这里指定了copy模块；
+- -a：指定模块的参数；
+- src：管理节点源文件路径；
+- dest：被管理节点目标文件路径；
+**总结：**Ansible就是用什么模块让谁去做什么事情。  
+```
+[root@server ~]# ansible all -i 192.168.201.12,192.168.201.13 -m copy -a "src=/tmp/test.conf dest=/tmp/test.conf"
+# 返回结果的主机地址 | 状态:[改变的]
+192.168.201.12 | CHANGED => {
+    "ansible_facts": {
+        # 使用的Python解释器；
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    # 已进行改变；
+    "changed": true,
+    # 校验值；
+    "checksum": "da39a3ee5e6b4b0d3255bfef95601890afd80709",
+    # 目标文件地址；
+    "dest": "/tmp/test.conf",
+    # 组ID；
+    "gid": 0,
+    # 所属组；
+    "group": "root",
+    # MD5校验值；
+    "md5sum": "d41d8cd98f00b204e9800998ecf8427e",
+    # 文件权限；
+    "mode": "0644",
+    # 属主；
+    "owner": "root",
+    "secontext": "unconfined_u:object_r:admin_home_t:s0",
+    # 文件大小；
+    "size": 0,
+    # 临时脚本；
+    "src": "/root/.ansible/tmp/ansible-tmp-1742570063.3919895-30102-30456140223081/source",
+    # 状态：文件；
+    "state": "file",
+    "uid": 0
+}
+# 返回结果的主机地址 | 状态:[改变的]
+192.168.201.13 | CHANGED => {
+    "ansible_facts": {
+        # 使用的Python解释器；
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    # 已进行改变；
+    "changed": true,
+    # 校验值；
+    "checksum": "da39a3ee5e6b4b0d3255bfef95601890afd80709",
+    # 目标文件地址；
+    "dest": "/tmp/test.conf",
+    # 组ID；
+    "gid": 0,
+    # 所属组；
+    "group": "root",
+    "md5sum": "d41d8cd98f00b204e9800998ecf8427e",
+    # 文件权限；
+    "mode": "0644",
+    # 属主；
+    "owner": "root",
+    "secontext": "unconfined_u:object_r:admin_home_t:s0",
+    # 文件大小；
+    "size": 0,
+    # 临时脚本；
+    "src": "/root/.ansible/tmp/ansible-tmp-1742570063.575389-30103-280071870449982/source",
+    # 状态：文件；
+    "state": "file",
+    "uid": 0
+}
+```
+
+# Ansible资产
+在上一章中我们用`-i`参数指定了2台被管理节点地址。但在实际生产环境中如果有1000台服务器该怎么办？这肯定要累死。  
+Ansible资产分为`静态资产`和`动态资产`。  
+**静态资产：**  
+静态资产是**固定的文本文件**，支持INI格式或YAML格式，明确列出所有主机、主机组及其变量。默认资产文件位于`/etc/ansible/hosts`。使用pip安装的Ansible可能没有这个文件，创建一个即可。  
+**特点：**
+- 手动维护：需要人工添加、删除或修改主机信息。  
+- ​简单直观：适合固定的小规模环境（如本地服务器、少量虚拟机）。  
+- 支持嵌套组和变量：可通过组变量、主机变量灵活配置。  
+
+**静态资产主机编写格式：**  
+- 注释以#开头
+- 空行会被忽略
+- 主机组由[header]元素分隔
+- 可输入主机名或IP地址
+- 一个主机名/IP支持属于多个组  
+
+首先来编写自定义资产inventory.ini。  
+```
+192.168.10.201
+10.10.200.101
+192.168.50.[1:10]
+test1.example.com
+test2.example.com
+new[01:09].example.com
+
+[test1-servers]
+192.168.201.12
+192.168.201.13
+192.168.60.11
+
+[test2-servers]
+192.168.100.11
+192.168.100.12
+192.168.60.11
+
+[all-servers:children]
+test1-servers
+test2-servers
+```
+如何使用自定义资产？  
+通过-i参数指定自定义资产的相对路径或绝对路径即可。  
+`ansible all -i /etc/ansible/inventory.ini ...`  
+如何验证自定义资产？  
+`ansible -i inventory.ini test1-servers --list-hosts`  
+列出inventory.ini文件中test1-servers分组的主机；  
+```
+[root@server ~]# ansible -i /etc/ansible/inventory.ini test1-servers --list-hosts
+[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
+  hosts (3):
+    192.168.201.12
+    192.168.201.13
+    192.168.60.11
+```
+# Ansible资产编写格式
+[1]未分组的主机：  
+这些没有具体归属的组，默认会被分配到`ALL`组。  
+```
+192.168.10.1
+10.10.10.11
+red.example.com
+```
+[2]分组的主机：  
+```
+[webservers]
+192.168.20.1
+10.20.10.11
+green.example.com
+```
+[3]连续的主机：  
+```
+# 192.168.30.1~192.168.30.15;
+192.168.30.[1:15]
+# www1.example.com~www9.example.com;
+www[1:9].example.com 
+```
+[4]注释掉的主机：
+```
+# 192.168.1.1
+```
+
+# 资产选择器
+有时候我们只想对资产文件中的某一部分资产进行操作，而不是全部资产服务器。这时就可以使用Ansible资产选择器`PATTERN`。  
+基本语法格式：`ansible PATTERN -i inventory -m module -a argument`。  
+其中，`PATTERN`可以是资产文件中的存在的一台主机[主机名或IP]或一个组名；  
+`-i`：指定资产文件；  
+`-m`：指定使用的模块；  
+`-a`：关于使用的模块传递的参数；  
+[1]选择单台服务器：`ansible -i /etc/ansible/inventory.ini 192.168.201.12 --list-hosts`。  
+```
+[root@server ~]# ansible -i /etc/ansible/inventory.ini 192.168.201.12 --list-hosts
+[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
+  hosts (1):
+    192.168.201.12
+```
+也可以将IP替换为主机名：  
+```
+[root@server ~]# ansible -i /etc/ansible/inventory.ini test1.example.com --list-hosts
+[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
+  hosts (1):
+    test1.example.com
+```
+[2]选择多台主机使用","间隔：  
+```
+[root@server ~]# ansible -i /etc/ansible/inventory.ini 192.168.201.12,192.168.201.13 --list-hosts
+[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
+  hosts (2):
+    192.168.201.12
+    192.168.201.13
+```
+[3]选择一个组：  
+192.168.60.11同时属于test1-servers和test2-servers组，但是Ansible会自动去重，并不会对重复的主机执行2次操作。  
+```
+[root@server ~]# ansible -i /etc/ansible/inventory.ini all-servers --list-hosts
+[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
+  hosts (5):
+    192.168.201.12
+    192.168.201.13
+    192.168.60.11
+    192.168.100.11
+    192.168.100.12
+```
+[4]使用*匹配：  
+```
+[root@server ~]# ansible -i /etc/ansible/inventory.ini 192.168.50.* --list-hosts
+[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
+  hosts (10):
+    192.168.50.1
+    192.168.50.2
+    192.168.50.3
+    192.168.50.4
+    192.168.50.5
+    192.168.50.6
+    192.168.50.7
+    192.168.50.8
+    192.168.50.9
+    192.168.50.10
+```
+[5]使用逻辑匹配：  
+1. 列出test1-servers和test2-servers两个组的并集，并自动去重。  
+```
+[root@server ~]# ansible -i /etc/ansible/inventory.ini 'test1-servers:test2-servers' --list-hosts
+[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
+  hosts (5):
+    192.168.201.12
+    192.168.201.13
+    192.168.60.11
+    192.168.100.11
+    192.168.100.12
+```
+2. 列出test1-servers和test2-servers两个组的交集，即两组共有的主机。  
+```
+[root@server ~]# ansible -i /etc/ansible/inventory.ini 'test1-servers:&test2-servers' --list-hosts
+[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
+  hosts (1):
+    192.168.60.11
+```
+3. 列出在test1-servers中，不在test2中，及去除两组共有的主机后的主机的集合。  
+需要注意的是命令有先后顺序之分。  
+```
+[root@server ~]# ansible -i /etc/ansible/inventory.ini 'test1-servers:!test2-servers' --list-hosts
+[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
+  hosts (2):
+    192.168.201.12
+    192.168.201.13
+```
+![Snipaste 2025 04 12 19 59 23](https://s1.imagehub.cc/images/2025/04/12/d9eee8041ac013cec98b0601025e0f03.png)
+4. 列出在test2-servers中，不在test1中，及去除两组共有的主机后的主机的集合。  
+```
+[root@server ~]# ansible -i /etc/ansible/inventory.ini 'test2-servers:!test1-servers' --list-hosts
+[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
+  hosts (2):
+    192.168.100.11
+    192.168.100.12
+```
+![Snipaste 2025 04 12 20 03 09](https://s1.imagehub.cc/images/2025/04/12/42302fcd3c80a3bb797a654fecc49211.png)
+
