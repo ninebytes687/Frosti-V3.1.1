@@ -815,4 +815,217 @@ lookme.txt
 ## copy
 
 **作用：**  
-将管理节点上的文件或目录​​复制到被管理节点​​的指定路径，支持设置权限、属主等属性。  
+将管理节点上的文件或目录​​复制到各被管理节点​​的指定路径，支持设置权限、属主等属性。  
+**常用参数：**
+- src：源文件路径（管理节点文件/目录）；
+- dest：目标路径（被管理节点文件/目录）；
+- backup：若被管理节点​​的源文件有变动，则在覆盖前备份原文件（yes/no）；
+- owner：设置新拷贝文件属主；
+- group：设置新拷贝文件属组；
+- mode：设置新拷贝文件权限（八进制或符号模式）；
+
+**src & dest Example：**  
+
+复制管理节点/root/tsb1.txt到被管理节点/root目录中：  
+`ansible test1-servers -i /etc/ansible/inventory2.ini -m copy -a "src=./tsb1.txt dest=/root/tsb1.txt"`  
+```
+[root@server ~]# ansible test1-servers -i /etc/ansible/inventory2.ini -m copy -a "src=./tsb1.txt dest=/root/tsb1.txt"
+[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
+192.168.201.12 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "checksum": "ebb92ca6d631204c2333dd9513e3c137ac13395d",
+    "dest": "/root/tsb1.txt",
+    "gid": 0,
+    "group": "root",
+    "md5sum": "4e1825cbf34d727cfad6a838d9939704",
+    "mode": "0644",
+    "owner": "root",
+    "secontext": "system_u:object_r:admin_home_t:s0",
+    "size": 6,
+    "src": "/root/.ansible/tmp/ansible-tmp-1744555001.9337418-7441-110356214628896/source",
+    "state": "file",
+    "uid": 0
+}
+```
+然后就可以看到在被管理节点/root目录下有新创建的tsb1.txt文件。  
+```
+[root@server ~]# ansible test1-servers -i /etc/ansible/inventory2.ini -m shell -a "ls /root"
+[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
+192.168.201.12 | CHANGED | rc=0 >>
+anaconda-ks.cfg
+lookme.txt
+tsb1.txt
+```
+
+**backup Example：**  
+我们刚才从管理节点复制了tsb1.txt到被管理节点上，这份文件并没有进行变动。  
+现在我们将backup参数设置为yes看看效果。  
+```
+[root@server ~]# ansible test1-servers -i /etc/ansible/inventory2.ini -m copy -a "src=./tsb1.txt dest=/root/tsb1.txt backup=yes"
+[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
+192.168.201.12 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": false,
+    "checksum": "ebb92ca6d631204c2333dd9513e3c137ac13395d",
+    "dest": "/root/tsb1.txt",
+    "gid": 0,
+    "group": "root",
+    "mode": "0644",
+    "owner": "root",
+    "path": "/root/tsb1.txt",
+    "secontext": "system_u:object_r:admin_home_t:s0",
+    "size": 6,
+    "state": "file",
+    "uid": 0
+}
+```
+可以看到changed参数是false的。  
+若是现有的md5值与将要复制的文件的md5值一致的话，那么Ansible并不会进行任何操作，只会反馈记录给你，并不会进行覆盖文件和备份源文件的操作。  
+现在我们将被管理节点的tsb1.txt追加一点字符，让其进行改变：  
+```
+[root@slave1 ~]# echo "0413" >> tsb1.txt
+[root@slave1 ~]# cat tsb1.txt 
+2025
+0413
+```
+现在再次执行命令：  
+可以看到changed参数已经变为true。  
+```
+[root@server ~]# ansible test1-servers -i /etc/ansible/inventory2.ini -m copy -a "src=./tsb1.txt dest=/root/tsb1.txt backup=yes"
+[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
+192.168.201.12 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "backup_file": "/root/tsb1.txt.5644.2025-04-13@23:05:42~",
+    "changed": true,
+    "checksum": "ebb92ca6d631204c2333dd9513e3c137ac13395d",
+    "dest": "/root/tsb1.txt",
+    "gid": 0,
+    "group": "root",
+    "md5sum": "4e1825cbf34d727cfad6a838d9939704",
+    "mode": "0644",
+    "owner": "root",
+    "secontext": "system_u:object_r:admin_home_t:s0",
+    "size": 6,
+    "src": "/root/.ansible/tmp/ansible-tmp-1744556732.4213805-7558-258084477085640/source",
+    "state": "file",
+    "uid": 0
+}
+```
+验证：  
+Ansible备份文件为`tsb1.txt.5644.2025-04-13@23:05:42~`。  
+```
+[root@server ~]# ansible test1-servers -i /etc/ansible/inventory2.ini -m shell -a "ls /root"
+[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
+192.168.201.12 | CHANGED | rc=0 >>
+anaconda-ks.cfg
+lookme.txt
+tsb1.txt
+tsb1.txt.5644.2025-04-13@23:05:42~
+
+-----
+
+[root@server ~]# ansible test1-servers -i /etc/ansible/inventory2.ini -m shell -a "cat /root/tsb1*"
+[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
+192.168.201.12 | CHANGED | rc=0 >>
+2025 #未经追加变动的文件
+
+2025 #经过追加变动的文件
+0413
+```
+
+**owner & group Example：**  
+将tsb1.txt文件设置所属用户为ninebytes，所属用户组为ninebytes。  
+- 设置的所属用户或用户组须在目标主机上存在。否则使用`useradd -m -s /bin/bash -G [usergroup] [username]`创建。  
+
+```
+[root@server ~]# ansible test1-servers -i /etc/ansible/inventory2.ini -m copy -a "src=./tsb1.txt dest=/root/tsb1.txt owner=ninebytes group=ninebytes"
+[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
+192.168.201.12 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "checksum": "ebb92ca6d631204c2333dd9513e3c137ac13395d",
+    "dest": "/root/tsb1.txt",
+    "gid": 1000,
+    "group": "ninebytes",
+    "mode": "0644",
+    "owner": "ninebytes",
+    "path": "/root/tsb1.txt",
+    "secontext": "system_u:object_r:admin_home_t:s0",
+    "size": 6,
+    "state": "file",
+    "uid": 1000
+}
+```
+验证：  
+可以看到tsb1.txt文件所属用户及所属用户组已经为ninebytes。  
+```
+[root@server ~]# ansible test1-servers -i /etc/ansible/inventory2.ini -m shell -a "ls -l /root"
+[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
+192.168.201.12 | CHANGED | rc=0 >>
+total 12
+-rw-------. 1 root      root      1197 Mar 20 18:13 anaconda-ks.cfg
+-rw-r--r--. 1 root      root         0 Apr 13 21:01 lookme.txt
+-rw-r--r--. 1 ninebytes ninebytes    6 Apr 13 23:05 tsb1.txt
+-rw-r--r--. 1 root      root        10 Apr 13 23:01 tsb1.txt.5644.2025-04-13@23:05:42~
+```
+
+**mode Example：**
+将tsb1权限设置为755：  
+```
+[root@server ~]# ansible test1-servers -i /etc/ansible/inventory2.ini -m copy -a "src=./tsb1.txt dest=/root/tsb1.txt mode=0755"
+[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
+192.168.201.12 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "checksum": "ebb92ca6d631204c2333dd9513e3c137ac13395d",
+    "dest": "/root/tsb1.txt",
+    "gid": 1000,
+    "group": "ninebytes",
+    "mode": "0755",
+    "owner": "ninebytes",
+    "path": "/root/tsb1.txt",
+    "secontext": "system_u:object_r:admin_home_t:s0",
+    "size": 6,
+    "state": "file",
+    "uid": 1000
+}
+```
+可以看到mode参数已经变为了0755，但是所属用户及用户组依然是ninebytes。  
+现在我们将tsb1.txt文件删除，再次复制一份tsb1.txt文件，并将权限设置为755：  
+```
+[root@server ~]# ansible test1-servers -i /etc/ansible/inventory2.ini -m copy -a "src=./tsb1.txt dest=/root/tsb1.txt mode=0755"
+[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
+192.168.201.12 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "checksum": "ebb92ca6d631204c2333dd9513e3c137ac13395d",
+    "dest": "/root/tsb1.txt",
+    "gid": 0,
+    "group": "root",
+    "md5sum": "4e1825cbf34d727cfad6a838d9939704",
+    "mode": "0755",
+    "owner": "root",
+    "secontext": "system_u:object_r:admin_home_t:s0",
+    "size": 6,
+    "src": "/root/.ansible/tmp/ansible-tmp-1744558397.1363587-7717-16903293464467/source",
+    "state": "file",
+    "uid": 0
+}
+```
+可以看到由于我们并没有指定文件的所属用户及用户组，所以默认归属于root用户。
+****
+
+## yum_repsitory
