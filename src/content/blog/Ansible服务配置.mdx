@@ -42,6 +42,7 @@ Ansible是一款开源的​自动化工具，由RedHat开发并维护，基于P
 |OpenSSH|OpenSSH|
 |Python>=2.6|Python>=2.4|
 |Ansible|/|
+****
 
 # 安装EPEL仓库
 使用`wget`命令下载EPEL的rpm包：`wget https://mirrors.aliyun.com/epel/epel-release-latest-9.noarch.rpm`
@@ -189,6 +190,7 @@ Complete!
 `sed -i 's/enabled=1/enabled=0/g' /etc/yum.repos.d/epel-cisco-openh264.repo`。  
 清理缓存并生成新缓存：  
 `rm -rf /var/cache/dnf && dnf clean all && sudo dnf makecache`。  
+****
 
 # 安装Ansible
 **dnf安装：**
@@ -278,6 +280,7 @@ ansible [core 2.14.14]
 **pip安装：**  
 安装Python3和pip：`dnf install python3 python3-pip`。  
 pip安装ansible`pip3 install ansible`。
+****
 
 # 建立信任关系
 Ansible使用的是SSH协议控制被管理节点的，就需要把管理节点的公钥给到被管理节点。  
@@ -361,6 +364,7 @@ Now try logging into the machine, with:   "ssh 'root@192.168.201.13'"
 and check to make sure that only the key(s) you wanted were added.
 
 ```
+****
 
 # Ansible命令展示
 **管理节点测试与被原理节点连通性：**
@@ -490,6 +494,7 @@ ansible all -i 192.168.201.12,192.168.201.13 -m copy -a "src=/tmp/test.conf dest
     "uid": 0
 }
 ```
+****
 
 # Ansible资产
 在上一章中我们用`-i`参数指定了2台被管理节点地址。但在实际生产环境中如果有1000台服务器该怎么办？这肯定要累死。  
@@ -545,6 +550,8 @@ test2-servers
     192.168.201.13
     192.168.60.11
 ```
+****
+
 # Ansible资产编写格式
 [1]未分组的主机：  
 这些没有具体归属的组，默认会被分配到`ALL`组。  
@@ -571,6 +578,7 @@ www[1:9].example.com
 ```
 # 192.168.1.1
 ```
+****
 
 # 资产选择器
 有时候我们只想对资产文件中的某一部分资产进行操作，而不是全部资产服务器。这时就可以使用Ansible资产选择器`PATTERN`。  
@@ -669,6 +677,7 @@ www[1:9].example.com
 ```
 示例图：  
 ![Snipaste 2025 04 12 20 03 09](https://s1.imagehub.cc/images/2025/04/12/42302fcd3c80a3bb797a654fecc49211.png)
+****
 
 # AD-Hoc
 **1.什么是AD-Hoc？**  
@@ -700,8 +709,110 @@ Ansible 的核⼼模块和附加模块，数量是数以千计的。这样庞⼤
 -s：可选，查看简化文档；  
 模块名：必选，模块名称；  
 **使用方法文档太长，不做展示。**  
+****
 
 # 常用模块
 ## command & shell
-这两个模块都是在远程服务器上执行的。  
+
+**command模块作用：**  
+在目标节点上 ​​直接执行命令​​，​​不通过 shell 解析​​（如变量替换、管道等）。  
 command模块是AD-Hoc的默认模块，在执行AD-Hoc时，若不指定模块，则默认使用command模块。  
+
+**shell模块作用：**  
+在目标节点上 ​​通过shell环境执行命令​​，支持所有shell功能（管道、重定向等）。
+
+现在新建一个`inventory2.ini`。  
+```
+[test1-servers]
+192.168.201.12
+
+[test2-servers]
+192.168.201.13
+```
+执行命令：`ansible all -i /etc/ansible/inventory2.ini -a "echo 'hello'"`。  
+这条命令并没有指定模块，默认使用的是command模块。  
+```
+[root@server ~]# ansible all -i /etc/ansible/inventory2.ini -a "echo 'hello'"
+[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
+192.168.201.13 | CHANGED | rc=0 >>
+hello
+192.168.201.12 | CHANGED | rc=0 >>
+hello
+```
+现在再指定shell模块执行相同的命令：`ansible all -i /etc/ansible/inventory2.ini -m shell -a "echo 'hello'"`。  
+```
+[root@server ~]# ansible all -i /etc/ansible/inventory2.ini -m shell -a "echo 'hello'"
+[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
+192.168.201.13 | CHANGED | rc=0 >>
+hello
+192.168.201.12 | CHANGED | rc=0 >>
+hello
+```
+可以看到输出结果均是相同的。  
+
+**command和shell模块区别：**  
+1. commend模块无法执行shell内置命令及特性；  
+2. shell模块可以执行shell内置命令和特性。例如管道符等；  
+
+**Example：**  
+使用shell模块+管道符过滤出e字母：  
+`ansible all -i /etc/ansible/inventory2.ini -m shell -a "echo 'hello' | grep -o 'e'"`。  
+```
+[root@server ~]# ansible all -i /etc/ansible/inventory2.ini -m shell -a "echo 'hello' | grep -o 'e'"
+[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
+192.168.201.13 | CHANGED | rc=0 >>
+e
+192.168.201.12 | CHANGED | rc=0 >>
+e
+```
+不指定模块，使用默认commend模块+管道符过滤出e字母：  
+`ansible all -i /etc/ansible/inventory2.ini -a "echo 'hello' | grep -o 'e'"`  
+```
+[root@server ~]# ansible all -i /etc/ansible/inventory2.ini -a "echo 'hello' | grep -o 'e'"
+[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
+192.168.201.13 | CHANGED | rc=0 >>
+hello | grep -o e
+192.168.201.12 | CHANGED | rc=0 >>
+hello | grep -o e
+```
+## script
+**作用：**  
+该模块会将脚本​​复制到被管理节点后执行​​（类似scp+ssh组合），但执行.py脚本目标节点必须配有Python环境。  
+
+**Example：**  
+首先创建一个.sh脚本，在root用户目录下创建一个lookme.txt文件。  
+```
+[root@server ~]# vi tsa1.sh
+[root@server ~]# cat tsa1.sh 
+touch /root/lookme.txt
+```
+现在先对一个组进行操作：  
+`ansible test1-servers -i /etc/ansible/inventory2.ini -m script -a "/root/tsa1.sh"`  
+-a选项内加上你要复制的脚本的绝对路径。  
+```
+[root@server ~]# ansible test1-servers -i /etc/ansible/inventory2.ini -m script -a "/root/tsa1.sh"
+[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
+192.168.201.12 | CHANGED => {
+    "changed": true, #已进行改变；
+    "rc": 0, #返回值为0；
+    "stderr": "Shared connection to 192.168.201.12 closed.\r\n",
+    "stderr_lines": [
+        "Shared connection to 192.168.201.12 closed."
+    ],
+    "stdout": "",
+    "stdout_lines": []
+}
+```
+然后就可以看到在被管理节点/root目录下有新创建的lookme.txt文件。  
+```
+[root@server ~]# ansible test1-servers -i /etc/ansible/inventory2.ini -m shell -a "ls /root"
+[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
+192.168.201.12 | CHANGED | rc=0 >>
+anaconda-ks.cfg
+lookme.txt
+```
+
+## copy
+
+**作用：**  
+将管理节点上的文件或目录​​复制到被管理节点​​的指定路径，支持设置权限、属主等属性。  
