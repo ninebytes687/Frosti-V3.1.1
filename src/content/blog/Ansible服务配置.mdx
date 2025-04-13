@@ -754,7 +754,7 @@ hello
 1. commend模块无法执行shell内置命令及特性；  
 2. shell模块可以执行shell内置命令和特性。例如管道符等；  
 
-**Example：**  
+**commend & shell Example：**  
 使用shell模块+管道符过滤出e字母：  
 `ansible all -i /etc/ansible/inventory2.ini -m shell -a "echo 'hello' | grep -o 'e'"`。  
 ```
