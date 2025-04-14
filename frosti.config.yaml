@@ -70,7 +70,7 @@ site:
 user:
   name: NineBytes # 用户名
   site: "https://blog.ninebytes.top" # 用户的网站链接
-  avatar: /profile.png # 用户头像路径
+  avatar: "https://s21.ax1x.com/2025/04/14/pEWI3K1.png" # 用户头像路径
   sidebar: # 侧边栏配置
     social:
       - href: "https://github.com/ninebytes687"
