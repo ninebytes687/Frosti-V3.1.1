@@ -765,7 +765,8 @@ e
 192.168.201.12 | CHANGED | rc=0 >>
 e
 ```
-不指定模块，使用默认commend模块+管道符过滤出e字母：  
+不指定模块，使用默认commend模块执行相同命令：  
+可以看到输出结果，因为commend模块无法使用管道符，无法过滤出"e"字母，直接将echo后的参数整个输出了出来。  
 `ansible all -i /etc/ansible/inventory2.ini -a "echo 'hello' | grep -o 'e'"`  
 ```
 [root@server ~]# ansible all -i /etc/ansible/inventory2.ini -a "echo 'hello' | grep -o 'e'"
