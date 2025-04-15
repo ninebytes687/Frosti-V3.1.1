@@ -1045,7 +1045,7 @@ name = FEDORA EPEL
 删除EPEL源不需要添加EPEL源时的那么多参数，只需要指定name参数和state参数即可。name参数不需要指定文件后缀名。  
 
 ```
-[root@server ~]#  ansible test1-servers -i /etc/ansible/inventory2.ini -m yum_repository -a "name=epel state=absent"
+[root@server ~]# ansible test1-servers -i /etc/ansible/inventory2.ini -m yum_repository -a "name=epel state=absent"
 192.168.201.12 | CHANGED => {
     "ansible_facts": {
         "discovered_interpreter_python": "/usr/bin/python3"
@@ -1062,16 +1062,16 @@ name = FEDORA EPEL
 rocky.repo
 rocky.repo.bak
 ```
-需要注意的是state absent只能删除由Ansible管理过的repo文件，不能删除其他的repo文件：  
+需要注意的是state absent只能删除由Ansible管理过的repo文件，不能删除现有的或其它的.repo文件：  
 ```
-[root@server ~]#  ansible test1-servers -i /etc/ansible/inventory2.ini -m yum_repository -a "name=rocky state=absent"
+[root@server ~]# ansible test1-servers -i /etc/ansible/inventory2.ini -m yum_repository -a "name=rocky state=absent"
 192.168.201.12 | SUCCESS => {
     "ansible_facts": {
         "discovered_interpreter_python": "/usr/bin/python3"
     },
     "changed": false, #changed值为flase，改变失败；
     "repo": "rocky",
-    "state": "absent"
+    "state": "absent" #虽然state值为absent，但changed依然为flase，文件没有被删除;
 }
 ```
 虽然返回的state值为absent，但/etc/yum.repos.d目录下还是有rocky.repo文件，并没有进行更改/删除。  
