@@ -544,7 +544,6 @@ test2-servers
 列出inventory.ini文件中test1-servers分组的主机；  
 ```
 [root@server ~]# ansible -i /etc/ansible/inventory.ini test1-servers --list-hosts
-[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
   hosts (3):
     192.168.201.12
     192.168.201.13
@@ -590,21 +589,18 @@ www[1:9].example.com
 [1]选择单台服务器：`ansible -i /etc/ansible/inventory.ini 192.168.201.12 --list-hosts`。  
 ```
 [root@server ~]# ansible -i /etc/ansible/inventory.ini 192.168.201.12 --list-hosts
-[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
   hosts (1):
     192.168.201.12
 ```
 也可以将IP替换为主机名：  
 ```
 [root@server ~]# ansible -i /etc/ansible/inventory.ini test1.example.com --list-hosts
-[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
   hosts (1):
     test1.example.com
 ```
 [2]选择多台主机使用","间隔：  
 ```
 [root@server ~]# ansible -i /etc/ansible/inventory.ini 192.168.201.12,192.168.201.13 --list-hosts
-[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
   hosts (2):
     192.168.201.12
     192.168.201.13
@@ -613,7 +609,6 @@ www[1:9].example.com
 192.168.60.11同时属于test1-servers和test2-servers组，但是Ansible会自动去重，并不会对重复的主机执行2次操作。  
 ```
 [root@server ~]# ansible -i /etc/ansible/inventory.ini all-servers --list-hosts
-[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
   hosts (5):
     192.168.201.12
     192.168.201.13
@@ -624,7 +619,6 @@ www[1:9].example.com
 [4]使用*匹配：  
 ```
 [root@server ~]# ansible -i /etc/ansible/inventory.ini 192.168.50.* --list-hosts
-[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
   hosts (10):
     192.168.50.1
     192.168.50.2
@@ -641,7 +635,6 @@ www[1:9].example.com
 1. 列出test1-servers和test2-servers两个组的并集，并自动去重。  
 ```
 [root@server ~]# ansible -i /etc/ansible/inventory.ini 'test1-servers:test2-servers' --list-hosts
-[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
   hosts (5):
     192.168.201.12
     192.168.201.13
@@ -652,7 +645,6 @@ www[1:9].example.com
 2. 列出test1-servers和test2-servers两个组的交集，即两组共有的主机。  
 ```
 [root@server ~]# ansible -i /etc/ansible/inventory.ini 'test1-servers:&test2-servers' --list-hosts
-[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
   hosts (1):
     192.168.60.11
 ```
@@ -660,7 +652,6 @@ www[1:9].example.com
 需要注意的是命令有先后顺序之分。  
 ```
 [root@server ~]# ansible -i /etc/ansible/inventory.ini 'test1-servers:!test2-servers' --list-hosts
-[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
   hosts (2):
     192.168.201.12
     192.168.201.13
@@ -670,7 +661,6 @@ www[1:9].example.com
 4. 列出在test2-servers中，不在test1中，及去除两组共有的主机后的主机的集合。  
 ```
 [root@server ~]# ansible -i /etc/ansible/inventory.ini 'test2-servers:!test1-servers' --list-hosts
-[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
   hosts (2):
     192.168.100.11
     192.168.100.12
@@ -711,7 +701,7 @@ Ansible 的核⼼模块和附加模块，数量是数以千计的。这样庞⼤
 **使用方法文档太长，不做展示。**  
 ****
 
-# 常用模块
+# Ansible常用模块
 ## command & shell
 
 **command模块作用：**  
@@ -733,7 +723,6 @@ command模块是AD-Hoc的默认模块，在执行AD-Hoc时，若不指定模块�
 这条命令并没有指定模块，默认使用的是command模块。  
 ```
 [root@server ~]# ansible all -i /etc/ansible/inventory2.ini -a "echo 'hello'"
-[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
 192.168.201.13 | CHANGED | rc=0 >>
 hello
 192.168.201.12 | CHANGED | rc=0 >>
@@ -742,7 +731,6 @@ hello
 现在再指定shell模块执行相同的命令：`ansible all -i /etc/ansible/inventory2.ini -m shell -a "echo 'hello'"`。  
 ```
 [root@server ~]# ansible all -i /etc/ansible/inventory2.ini -m shell -a "echo 'hello'"
-[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
 192.168.201.13 | CHANGED | rc=0 >>
 hello
 192.168.201.12 | CHANGED | rc=0 >>
@@ -759,7 +747,6 @@ hello
 `ansible all -i /etc/ansible/inventory2.ini -m shell -a "echo 'hello' | grep -o 'e'"`。  
 ```
 [root@server ~]# ansible all -i /etc/ansible/inventory2.ini -m shell -a "echo 'hello' | grep -o 'e'"
-[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
 192.168.201.13 | CHANGED | rc=0 >>
 e
 192.168.201.12 | CHANGED | rc=0 >>
@@ -770,7 +757,6 @@ e
 `ansible all -i /etc/ansible/inventory2.ini -a "echo 'hello' | grep -o 'e'"`  
 ```
 [root@server ~]# ansible all -i /etc/ansible/inventory2.ini -a "echo 'hello' | grep -o 'e'"
-[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
 192.168.201.13 | CHANGED | rc=0 >>
 hello | grep -o e
 192.168.201.12 | CHANGED | rc=0 >>
@@ -792,7 +778,6 @@ touch /root/lookme.txt
 -a选项内加上你要复制的脚本的绝对路径。  
 ```
 [root@server ~]# ansible test1-servers -i /etc/ansible/inventory2.ini -m script -a "/root/tsa1.sh"
-[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
 192.168.201.12 | CHANGED => {
     "changed": true, #已进行改变；
     "rc": 0, #返回值为0；
@@ -807,7 +792,6 @@ touch /root/lookme.txt
 然后就可以看到在被管理节点/root目录下有新创建的lookme.txt文件。  
 ```
 [root@server ~]# ansible test1-servers -i /etc/ansible/inventory2.ini -m shell -a "ls /root"
-[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
 192.168.201.12 | CHANGED | rc=0 >>
 anaconda-ks.cfg
 lookme.txt
@@ -831,7 +815,6 @@ lookme.txt
 `ansible test1-servers -i /etc/ansible/inventory2.ini -m copy -a "src=./tsb1.txt dest=/root/tsb1.txt"`  
 ```
 [root@server ~]# ansible test1-servers -i /etc/ansible/inventory2.ini -m copy -a "src=./tsb1.txt dest=/root/tsb1.txt"
-[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
 192.168.201.12 | CHANGED => {
     "ansible_facts": {
         "discovered_interpreter_python": "/usr/bin/python3"
@@ -854,7 +837,6 @@ lookme.txt
 然后就可以看到在被管理节点/root目录下有新创建的tsb1.txt文件。  
 ```
 [root@server ~]# ansible test1-servers -i /etc/ansible/inventory2.ini -m shell -a "ls /root"
-[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
 192.168.201.12 | CHANGED | rc=0 >>
 anaconda-ks.cfg
 lookme.txt
@@ -866,7 +848,6 @@ tsb1.txt
 现在我们将backup参数设置为yes看看效果。  
 ```
 [root@server ~]# ansible test1-servers -i /etc/ansible/inventory2.ini -m copy -a "src=./tsb1.txt dest=/root/tsb1.txt backup=yes"
-[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
 192.168.201.12 | SUCCESS => {
     "ansible_facts": {
         "discovered_interpreter_python": "/usr/bin/python3"
@@ -898,7 +879,6 @@ tsb1.txt
 可以看到changed参数已经变为true。  
 ```
 [root@server ~]# ansible test1-servers -i /etc/ansible/inventory2.ini -m copy -a "src=./tsb1.txt dest=/root/tsb1.txt backup=yes"
-[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
 192.168.201.12 | CHANGED => {
     "ansible_facts": {
         "discovered_interpreter_python": "/usr/bin/python3"
@@ -923,7 +903,6 @@ tsb1.txt
 Ansible备份文件为`tsb1.txt.5644.2025-04-13@23:05:42~`。  
 ```
 [root@server ~]# ansible test1-servers -i /etc/ansible/inventory2.ini -m shell -a "ls /root"
-[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
 192.168.201.12 | CHANGED | rc=0 >>
 anaconda-ks.cfg
 lookme.txt
@@ -933,7 +912,6 @@ tsb1.txt.5644.2025-04-13@23:05:42~
 -----
 
 [root@server ~]# ansible test1-servers -i /etc/ansible/inventory2.ini -m shell -a "cat /root/tsb1*"
-[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
 192.168.201.12 | CHANGED | rc=0 >>
 2025 #未经追加变动的文件
 
@@ -947,7 +925,6 @@ tsb1.txt.5644.2025-04-13@23:05:42~
 
 ```
 [root@server ~]# ansible test1-servers -i /etc/ansible/inventory2.ini -m copy -a "src=./tsb1.txt dest=/root/tsb1.txt owner=ninebytes group=ninebytes"
-[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
 192.168.201.12 | CHANGED => {
     "ansible_facts": {
         "discovered_interpreter_python": "/usr/bin/python3"
@@ -970,7 +947,6 @@ tsb1.txt.5644.2025-04-13@23:05:42~
 可以看到tsb1.txt文件所属用户及所属用户组已经为ninebytes。  
 ```
 [root@server ~]# ansible test1-servers -i /etc/ansible/inventory2.ini -m shell -a "ls -l /root"
-[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
 192.168.201.12 | CHANGED | rc=0 >>
 total 12
 -rw-------. 1 root      root      1197 Mar 20 18:13 anaconda-ks.cfg
@@ -983,7 +959,6 @@ total 12
 将tsb1权限设置为755：  
 ```
 [root@server ~]# ansible test1-servers -i /etc/ansible/inventory2.ini -m copy -a "src=./tsb1.txt dest=/root/tsb1.txt mode=0755"
-[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
 192.168.201.12 | CHANGED => {
     "ansible_facts": {
         "discovered_interpreter_python": "/usr/bin/python3"
@@ -1006,7 +981,6 @@ total 12
 现在我们将tsb1.txt文件删除，再次复制一份tsb1.txt文件，并将权限设置为755：  
 ```
 [root@server ~]# ansible test1-servers -i /etc/ansible/inventory2.ini -m copy -a "src=./tsb1.txt dest=/root/tsb1.txt mode=0755"
-[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
 192.168.201.12 | CHANGED => {
     "ansible_facts": {
         "discovered_interpreter_python": "/usr/bin/python3"
@@ -1030,3 +1004,80 @@ total 12
 ****
 
 ## yum_repsitory
+**作用：**  
+用于管理​​YUM/DNF软件仓库​​的模块，适用于​​RHEL/CentOS/Fedora​​等基于RPM的系统。它可以添加、修改或删除YUM仓库配置，确保目标主机能够从指定源安装软件包。  
+
+**常用参数：**  
+- name：仓库名称，必选的参数；  
+- description：仓库描述，可选；  
+- baseurl：仓库地址，必须的参数。支持http://、ftp://、file://；  
+- file：自定义保存到被控节点的.repo文件名。不含.repo，默认name参数的值；  
+- enable：是否启用仓库；  
+- gpgcheck：是否开启GPG检查，没有默认值，一般依靠/etc/yum.conf文件中的配置；  
+- gpgkey：GPG公钥URL。前提为gpgcheck=yes；  
+- state：present(添加/更新)或absent(删除)；  
+
+**Example：**  
+添加EPEL源：  
+```
+[root@server ~]# ansible test1-servers -i /etc/ansible/inventory2.ini -m yum_repository -a "name=epel baseurl='https://download.fedoraproject.org/pub/epel/ $releasever/$basearch/' description='FEDORA EPEL'"
+192.168.201.12 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true, #changed值为true，改变成功；
+    "repo": "epel",
+    "state": "present" #state值为present(添加/更新)；
+}
+```
+验证：  
+```
+[root@server ~]# ansible test1-servers -i /etc/ansible/inventory2.ini -m shell -a "ls /etc/yum.repos.d/ && cat /etc/yum.repos.d/epel.repo"
+192.168.201.12 | CHANGED | rc=0 >>
+epel.repo
+rocky.repo
+rocky.repo.bak
+[epel]
+baseurl = https://download.fedoraproject.org/pub/epel/ //
+name = FEDORA EPEL
+```
+删除EPEL源：  
+删除EPEL源不需要添加EPEL源时的那么多参数，只需要指定name参数和state参数即可。name参数不需要指定文件后缀名。  
+
+```
+[root@server ~]#  ansible test1-servers -i /etc/ansible/inventory2.ini -m yum_repository -a "name=epel state=absent"
+192.168.201.12 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true, #changed值为true，改变成功；
+    "repo": "epel",
+    "state": "absent" #state值为absent(删除)；
+}
+```
+验证：  
+```
+[root@server ~]# ansible test1-servers -i /etc/ansible/inventory -m shell -a "ls /etc/yum.repos.d/"
+192.168.201.12 | CHANGED | rc=0 >>
+rocky.repo
+rocky.repo.bak
+```
+需要注意的是state absent只能删除由Ansible管理过的repo文件，不能删除其他的repo文件：  
+```
+[root@server ~]#  ansible test1-servers -i /etc/ansible/inventory2.ini -m yum_repository -a "name=rocky state=absent"
+192.168.201.12 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": false, #changed值为flase，改变失败；
+    "repo": "rocky",
+    "state": "absent"
+}
+```
+虽然返回的state值为absent，但/etc/yum.repos.d目录下还是有rocky.repo文件，并没有进行更改/删除。  
+```
+[root@server ~]# ansible test1-servers -i /etc/ansible/inventory -m shell -a "ls /etc/yum.repos.d/"
+192.168.201.12 | CHANGED | rc=0 >>
+rocky.repo
+rocky.repo.bak
+```
