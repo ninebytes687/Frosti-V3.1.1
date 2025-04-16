@@ -318,7 +318,8 @@ id_rsa  id_rsa.pub
 ```
 **传输公钥至被管理节点：**
 使用命令：`ssh-copy-id root@192.168.201.12`。  
-- 请将"root@192.168.201.12"替换成你当前所在环境的用户名及主机地址；
+- 请将"root@192.168.201.12"替换成你当前所在环境的用户名及主机地址；  
+
 ```
 [root@server ~]# ssh-copy-id root@192.168.201.12
 /usr/bin/ssh-copy-id: INFO: Source of key(s) to be installed: "/root/.ssh/id_rsa.pub"
@@ -364,7 +365,6 @@ Number of key(s) added: 1
 
 Now try logging into the machine, with:   "ssh 'root@192.168.201.13'"
 and check to make sure that only the key(s) you wanted were added.
-
 ```
 ****
 
@@ -392,6 +392,7 @@ Ansible资产分为：静态资产和动态资产。
 - ​自动更新​​：主机信息从外部系统（如云平台、CMDB）动态获取；  
 - ​减少人工维护​​：适合大规模、频繁变动的环境；  
 - 支持过滤和变量​​：可以根据标签、区域等条件动态分组；  
+****
 
 # 资产编写语法
 [1]未分组的主机：  
@@ -433,7 +434,6 @@ www[1:9].example.com
     192.168.201.13
     192.168.60.11
 ```
-
 ****
 
 # 资产选择器
