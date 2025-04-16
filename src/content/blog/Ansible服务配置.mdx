@@ -1,6 +1,6 @@
 ---
-title: "Ansible服务配置"
-description: "Ansible服务配置"
+title: "Ansible服务讲解"
+description: "持续更新···"
 pubDate: "Mar 21 2025"
 image: "https://s21.ax1x.com/2025/03/21/pE0V9C8.png"
 categories:
@@ -22,6 +22,7 @@ import LinkCard from "../../components/mdx/LinkCard.astro";
 
 # Ansible简介
 Ansible是一款开源的​自动化工具，由RedHat开发并维护，基于Python语言实现。它专注于简化 ​IT 基础设施的配置管理、应用部署和​任务自动化，遵循“基础设施即代码（IaC）”理念，通过声明式的语法实现高效运维。  
+
 **核心特性：**  
  1. 无客户端架构：通过 SSH（Linux）或 WinRM（Windows）直接管理节点，无需在目标机器上安装额外客户端，并且被管理节点会将结果返回至管理节点。  
  2. ​YAML 语法：使用易读的YAML文件（Playbook）定义自动化任务，降低学习成本。  
@@ -34,20 +35,21 @@ Ansible是一款开源的​自动化工具，由RedHat开发并维护，基于P
 - ​Playbook：YAML格式的自动化流程脚本，描述任务集和配置策略。  
 - ​Role​：可复用的任务集合，实现逻辑分层与代码复用。  
 
-<Info>无论是Ad-Hoc或PlayBook所执行的某些功能不是由某些命令执行的，而是由一个个已经封装好的模块去执行的。比如复制功能的COPY模块；实现Ping功能的PING模块；执行Shell脚本的SHELL模块等等。</Info>
+⚠️**注意：**  
+无论是Ad-Hoc或PlayBook所执行的某些功能不是由某些命令执行的，而是由一个个已经封装好的模块去执行的。比如复制功能的COPY模块；实现Ping功能的PING模块；执行Shell脚本的SHELL模块等等。  
 
 **先决条件：**  
 |管理节点|被管理节点|
 |---|---|
 |OpenSSH|OpenSSH|
-|Python>=2.6|Python>=2.4|
+|Python Version >=2.6|Python Version >=2.4|
 |Ansible|/|
 ****
 
 # 安装EPEL仓库
 使用`wget`命令下载EPEL的rpm包：`wget https://mirrors.aliyun.com/epel/epel-release-latest-9.noarch.rpm`
 ```
-[root@server /]# wget https://mirrors.aliyun.com/epel/epel-release-latest-9.noarch.rpm
+[root@server ~]# wget https://mirrors.aliyun.com/epel/epel-release-latest-9.noarch.rpm
 --2025-03-21 19:54:45--  https://mirrors.aliyun.com/epel/epel-release-latest-9.noarch.rpm
 Resolving mirrors.aliyun.com (mirrors.aliyun.com)... 123.182.95.105, 106.8.159.240, 106.8.159.237, ...
 Connecting to mirrors.aliyun.com (mirrors.aliyun.com)|123.182.95.105|:443... connected.
@@ -61,7 +63,7 @@ epel-release-latest-9.noarch.r 100%[============================================
 ```
 然后使用`dnf`命令安装下载好后的rpm包：`dnf install ./epel-release-latest-9.noarch.rpm`
 ```
-[root@server /]# dnf install ./epel-release-latest-9.noarch.rpm
+[root@server ~]# dnf install ./epel-release-latest-9.noarch.rpm
 Last metadata expiration check: 0:04:28 ago on Fri 21 Mar 2025 07:50:43 PM CST.
 Dependencies resolved.
 ===========================================================================================================================
@@ -108,7 +110,7 @@ sed -i.bak \
 如果在替换EPEL源时报错可以尝试强制重装EPEL rpm包。  
 **报错信息：**  
 ```
-[root@server /]# sed -e 's|^#baseurl=|baseurl=|g' \
+[root@server ~]# sed -e 's|^#baseurl=|baseurl=|g' \
          -e 's|^metalink|#metalink|g' \
          -e 's|https://download.example/pub/epel|https://mirrors.aliyun.com/epel|g' \
          -i /etc/yum.repos.d/epel*.repo
@@ -118,7 +120,7 @@ sed: can't read /etc/yum.repos.d/epel*.repo: No such file or directory
 强制重装EPEL rpm包：  
 `dnf reinstall ./epel-release-latest-9.noarch.rpm`
 ```
-[root@server /]# dnf reinstall ./epel-release-latest-9.noarch.rpm
+[root@server ~]# dnf reinstall ./epel-release-latest-9.noarch.rpm
 Last metadata expiration check: 0:10:53 ago on Fri 21 Mar 2025 07:50:43 PM CST.
 Dependencies resolved.
 ===========================================================================================================================
@@ -155,7 +157,7 @@ Complete!
 验证阿里云EPEL源：  
 `grep "mirrors.aliyun.com" /etc/yum.repos.d/epel*.repo`
 ```
-[root@server /]# grep "mirrors.aliyun.com" /etc/yum.repos.d/epel*.repo
+[root@server ~]# grep "mirrors.aliyun.com" /etc/yum.repos.d/epel*.repo
 /etc/yum.repos.d/epel-testing.repo:baseurl=https://mirrors.aliyun.com/epel/testing/9/Everything/$basearch/
 /etc/yum.repos.d/epel-testing.repo:baseurl=https://mirrors.aliyun.com/epel/testing/9/Everything/$basearch/debug/
 /etc/yum.repos.d/epel-testing.repo:baseurl=https://mirrors.aliyun.com/epel/testing/9/Everything/source/tree/
@@ -163,14 +165,14 @@ Complete!
 确认EPEL文件已生成：  
 `ls /etc/yum.repos.d/epel*.repo`
 ```
-[root@server /]# ls /etc/yum.repos.d/epel*.repo
+[root@server ~]# ls /etc/yum.repos.d/epel*.repo
 /etc/yum.repos.d/epel-cisco-openh264.repo  /etc/yum.repos.d/epel.repo  /etc/yum.repos.d/epel-testing.repo
 ```
 清理旧缓存：dnf clean all  
 生成新缓存：dnf makecache  
 测试仓库可用性：dnf update  
 ```
-[root@server /]# dnf clean all && dnf makecache && dnf update
+[root@server ~]# dnf clean all && dnf makecache && dnf update
 17 files removed
 Error: Cannot find a valid baseurl for repo: epel-cisco-openh264
 Rocky Linux 9 - BaseOS                                                                      29 MB/s | 2.2 MB     00:00    
@@ -196,7 +198,7 @@ Complete!
 **dnf安装：**
 使用`dnf install ansible-core`命令安装Ansible。  
 ```
-[root@server /]# dnf install ansible-core
+[root@server ~]# dnf install ansible-core
 Last metadata expiration check: 0:00:28 ago on Fri 21 Mar 2025 08:30:39 PM CST.
 Dependencies resolved.
 ===========================================================================================================================
@@ -262,7 +264,7 @@ Complete!
 验证安装：  
 `ansible --version`
 ```
-[root@server /]# ansible --version
+[root@server ~]# ansible --version
 ansible [core 2.14.14]
   # Ansible配置文件位置，特殊情况下才会修改；
   config file = /etc/ansible/ansible.cfg
@@ -366,192 +368,32 @@ and check to make sure that only the key(s) you wanted were added.
 ```
 ****
 
-# Ansible命令展示
-**管理节点测试与被原理节点连通性：**
-`ansible all -i 192.168.201.12,192.168.201.13 -m ping`。  
-命令参数解释：  
-- all：匹配所有指定的所有资产；
-- -i：使用Inventory模块，即主机列表；  
-- -m：指定模块为ping；  
-```
-[root@server ~]# ansible all -i 192.168.201.12,192.168.201.13 -m ping
-# 返回结果的主机地址 | 状态:[通过]
-192.168.201.13 | SUCCESS => {
-    "ansible_facts": {
-        # 使用的Python解释器；
-        "discovered_interpreter_python": "/usr/bin/python3"
-    },
-    # 改变字段为flase；只进行ping操作，没有对节点进行实际上的改变操作；
-    "changed": false,
-    # ping字段为pong表示测通；
-    "ping": "pong"
-}
-# 返回结果的主机地址 | 状态:[通过]
-192.168.201.12 | SUCCESS => {
-    "ansible_facts": {
-        # 使用的Python解释器；
-        "discovered_interpreter_python": "/usr/bin/python3"
-    },
-    # 改变字段为flase；只进行ping操作，没有对节点进行实际上的改变操作；
-    "changed": false,
-    # ping字段为pong表示测通；
-    "ping": "pong"
-}
-```
-- 返回的结果不是按照-i参数顺序来的，谁先完成操作将结果返回至管理节点谁先展示。  
-
-如果只对1台节点测通，那依然要对主机地址后边加英文逗号：  
-`ansible all -i 192.168.201.12, -m ping`
-```
-[root@server ~]# ansible all -i 192.168.201.12, -m ping
-# 返回结果的主机地址 | 状态:[通过]
-192.168.201.12 | SUCCESS => {
-    "ansible_facts": {
-        # 使用的Python解释器；
-        "discovered_interpreter_python": "/usr/bin/python3"
-    },
-    # 改变字段为flase；只进行ping操作，没有对节点进行实际上的改变操作；
-    "changed": false,
-    # ping字段为pong表示测通；
-    "ping": "pong"
-}
-```
-**传输管理节点文件至被管理节点：**  
-创建测试文件：`[root@server ~]# touch /tmp/test.conf`。  
-使用命令：
-```
-ansible all -i 192.168.201.12,192.168.201.13 -m copy -a "src=/tmp/test.conf dest=/tmp/test.conf"
-```
-命令参数解释：  
-- all：匹配所有指定的所有资产；
-- -i：Ansible的资产，即被管理节点列表。可以是元组可以是文件名；
-- -m：指定要运行的模块，这里指定了copy模块；
-- -a：指定模块的参数；
-- src：管理节点源文件路径；
-- dest：被管理节点目标文件路径；
-**总结：**Ansible就是用什么模块让谁去做什么事情。  
-```
-[root@server ~]# ansible all -i 192.168.201.12,192.168.201.13 -m copy -a "src=/tmp/test.conf dest=/tmp/test.conf"
-# 返回结果的主机地址 | 状态:[改变的]
-192.168.201.12 | CHANGED => {
-    "ansible_facts": {
-        # 使用的Python解释器；
-        "discovered_interpreter_python": "/usr/bin/python3"
-    },
-    # 已进行改变；
-    "changed": true,
-    # 校验值；
-    "checksum": "da39a3ee5e6b4b0d3255bfef95601890afd80709",
-    # 目标文件地址；
-    "dest": "/tmp/test.conf",
-    # 组ID；
-    "gid": 0,
-    # 所属组；
-    "group": "root",
-    # MD5校验值；
-    "md5sum": "d41d8cd98f00b204e9800998ecf8427e",
-    # 文件权限；
-    "mode": "0644",
-    # 属主；
-    "owner": "root",
-    "secontext": "unconfined_u:object_r:admin_home_t:s0",
-    # 文件大小；
-    "size": 0,
-    # 临时脚本；
-    "src": "/root/.ansible/tmp/ansible-tmp-1742570063.3919895-30102-30456140223081/source",
-    # 状态：文件；
-    "state": "file",
-    "uid": 0
-}
-# 返回结果的主机地址 | 状态:[改变的]
-192.168.201.13 | CHANGED => {
-    "ansible_facts": {
-        # 使用的Python解释器；
-        "discovered_interpreter_python": "/usr/bin/python3"
-    },
-    # 已进行改变；
-    "changed": true,
-    # 校验值；
-    "checksum": "da39a3ee5e6b4b0d3255bfef95601890afd80709",
-    # 目标文件地址；
-    "dest": "/tmp/test.conf",
-    # 组ID；
-    "gid": 0,
-    # 所属组；
-    "group": "root",
-    "md5sum": "d41d8cd98f00b204e9800998ecf8427e",
-    # 文件权限；
-    "mode": "0644",
-    # 属主；
-    "owner": "root",
-    "secontext": "unconfined_u:object_r:admin_home_t:s0",
-    # 文件大小；
-    "size": 0,
-    # 临时脚本；
-    "src": "/root/.ansible/tmp/ansible-tmp-1742570063.575389-30103-280071870449982/source",
-    # 状态：文件；
-    "state": "file",
-    "uid": 0
-}
-```
-****
-
 # Ansible资产
-在上一章中我们用`-i`参数指定了2台被管理节点地址。但在实际生产环境中如果有1000台服务器该怎么办？这肯定要累死。  
-Ansible资产分为`静态资产`和`动态资产`。  
+Ansible资产分为：静态资产和动态资产。  
+
 **静态资产：**  
-静态资产是**固定的文本文件**，支持INI格式或YAML格式，明确列出所有主机、主机组及其变量。默认资产文件位于`/etc/ansible/hosts`。使用pip安装的Ansible可能没有这个文件，创建一个即可。  
-**特点：**
-- 手动维护：需要人工添加、删除或修改主机信息。  
-- ​简单直观：适合固定的小规模环境（如本地服务器、少量虚拟机）。  
-- 支持嵌套组和变量：可通过组变量、主机变量灵活配置。  
 
-**静态资产主机编写格式：**  
-- 注释以#开头
-- 空行会被忽略
-- 主机组由[header]元素分隔
-- 可输入主机名或IP地址
-- 一个主机名/IP支持属于多个组  
+定义：静态资产是一个​手动编写​​的文本文件（默认为/etc/ansible/hosts），支持INI格式或YAML格式，其中包含固定的主机列表和分组信息。  
 
-首先来编写自定义资产inventory.ini。  
-```
-192.168.10.201
-10.10.200.101
-192.168.50.[1:10]
-test1.example.com
-test2.example.com
-new[01:09].example.com
+特点​：  
+- 手动维护​​：需要管理员手动编辑文件来添加、删除或修改主机。  
+- ​简单直接​​：适用于主机数量较少且变化不频繁的环境。  
+- ​支持分组和变量​​：可以在文件中定义主机组，并为组或主机设置变量。  
 
-[test1-servers]
-192.168.201.12
-192.168.201.13
-192.168.60.11
+适用场景：  
+- 小型或静态环境（如实验室、测试集群）；  
+- 需要手动控制主机列表的情况；  
 
-[test2-servers]
-192.168.100.11
-192.168.100.12
-192.168.60.11
+**动态资产：**  
 
-[all-servers:children]
-test1-servers
-test2-servers
-```
-如何使用自定义资产？  
-通过-i参数指定自定义资产的相对路径或绝对路径即可。  
-`ansible all -i /etc/ansible/inventory.ini ...`  
-如何验证自定义资产？  
-`ansible -i inventory.ini test1-servers --list-hosts`  
-列出inventory.ini文件中test1-servers分组的主机；  
-```
-[root@server ~]# ansible -i /etc/ansible/inventory.ini test1-servers --list-hosts
-  hosts (3):
-    192.168.201.12
-    192.168.201.13
-    192.168.60.11
-```
-****
+定义：动态资产通过​​外部脚本或API​​实时获取主机信息，适用于 ​云环境或 ​自动伸缩场景。  
 
-# Ansible资产编写格式
+特点​​：  
+- ​自动更新​​：主机信息从外部系统（如云平台、CMDB）动态获取；  
+- ​减少人工维护​​：适合大规模、频繁变动的环境；  
+- 支持过滤和变量​​：可以根据标签、区域等条件动态分组；  
+
+# 资产编写语法
 [1]未分组的主机：  
 这些没有具体归属的组，默认会被分配到`ALL`组。  
 ```
@@ -577,6 +419,21 @@ www[1:9].example.com
 ```
 # 192.168.1.1
 ```
+
+如何使用自定义资产？  
+通过-i参数指定自定义资产的相对路径或绝对路径即可。  
+`ansible all -i /etc/ansible/inventory.ini ...`  
+如何验证自定义资产？  
+`ansible -i inventory.ini test1-servers --list-hosts`  
+列出inventory.ini文件中test1-servers分组的主机；  
+```
+[root@server ~]# ansible -i /etc/ansible/inventory.ini test1-servers --list-hosts
+  hosts (3):
+    192.168.201.12
+    192.168.201.13
+    192.168.60.11
+```
+
 ****
 
 # 资产选择器
@@ -816,20 +673,21 @@ lookme.txt
 ```
 [root@server ~]# ansible test1-servers -i /etc/ansible/inventory2.ini -m copy -a "src=./tsb1.txt dest=/root/tsb1.txt"
 192.168.201.12 | CHANGED => {
+#返回结果的被控节点地址 | 状态：改变；
     "ansible_facts": {
-        "discovered_interpreter_python": "/usr/bin/python3"
+        "discovered_interpreter_python": "/usr/bin/python3" #使用的python解释器；
     },
-    "changed": true,
-    "checksum": "ebb92ca6d631204c2333dd9513e3c137ac13395d",
-    "dest": "/root/tsb1.txt",
-    "gid": 0,
-    "group": "root",
-    "md5sum": "4e1825cbf34d727cfad6a838d9939704",
-    "mode": "0644",
-    "owner": "root",
+    "changed": true, #已进行改变；
+    "checksum": "ebb92ca6d631204c2333dd9513e3c137ac13395d", #源文件的SHA1校验值；
+    "dest": "/root/tsb1.txt", #目标文件地址；
+    "gid": 0, #属组ID；
+    "group": "root", #所属组；
+    "md5sum": "4e1825cbf34d727cfad6a838d9939704", #目标文件MD5校验值；
+    "mode": "0644", #文件权限；
+    "owner": "root", #属主；
     "secontext": "system_u:object_r:admin_home_t:s0",
-    "size": 6,
-    "src": "/root/.ansible/tmp/ansible-tmp-1744555001.9337418-7441-110356214628896/source",
+    "size": 6, #文件大小；
+    "src": "/root/.ansible/tmp/ansible-tmp-1744555001.9337418-7441-110356214628896/source", #临时脚本文件地址；
     "state": "file",
     "uid": 0
 }
