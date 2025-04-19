@@ -7,6 +7,8 @@ categories:
   - tech
 tags:
   - SSL
+  - Linux
+  - Debian Linux
 ---
 
 # 前言
