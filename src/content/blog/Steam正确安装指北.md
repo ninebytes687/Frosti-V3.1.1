@@ -2,7 +2,7 @@
 title: "Steam正确安装指北"
 description: "本文将介绍Steam正确安装姿势"
 pubDate: "Jul 20 2024"
-image: "https://s21.ax1x.com/2025/01/16/pEF5iPU.jpg"
+image: "https://s21.ax1x.com/2025/04/26/pETV3TJ.png"
 categories:
   - tech
 tags:
