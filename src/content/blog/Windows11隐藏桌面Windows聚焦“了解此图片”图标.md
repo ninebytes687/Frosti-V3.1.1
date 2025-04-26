@@ -2,7 +2,7 @@
 title: "Windows11隐藏桌面Windows聚焦“了解此图片”图标"
 description: "So Microsoft F**k You"
 pubDate: "Aug 22 2024"
-image: "https://s21.ax1x.com/2025/01/16/pEF5KIK.png"
+image: "https://s21.ax1x.com/2025/04/26/pETVNSx.png"
 categories:
   - tech
 tags:
