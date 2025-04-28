@@ -31,9 +31,9 @@ ZeroSSL有免费的90D公网IP证书，本文章使用ZeroSSL进行公网IP证�
 
 # 申请新证书
 点击New Certificate申请新证书，在文本框内输入服务器公网IP地址，然后就一直Next Step即可。  
-![1](https://s1.imagehub.cc/images/2025/04/19/32cbbd4ee066aa08ca59fa665c9ac9be.png)
+![9 1](https://s1.imagehub.cc/images/2025/04/28/ed74210b7c0fa3db0065b3591ea3ce18.png)
 来到验证界面，选择HTTP验证。然后点击Download Auth File下载验证文件，将验证文件上传至刚刚创建的目录内。  
-![2](https://s1.imagehub.cc/images/2025/04/19/e769ee1fc7f7c8eeae46685f759299bf.png)
+![9 2](https://s1.imagehub.cc/images/2025/04/28/56d4a5fbd3234dea093f421d83994906.png)
 
 # 编写Nginx配置文件
 编写zerossl.conf文件：sudo vim /etc/nginx/zerossl.conf  
@@ -58,7 +58,7 @@ nginx: configuration file /etc/nginx/nginx.conf test is successful
 
 # 下载证书
 操作没有问题的话，验证通过后，ZeroSSL会颁发证书。选择默认的Certificate即可。  
-![3](https://s1.imagehub.cc/images/2025/04/19/b60362430118b76bdaadca0ba9a4d1af.png)
+![9 3](https://s1.imagehub.cc/images/2025/04/28/46c21a360b4ab5e1ee30332e521b365a.png)
 
 # 部署证书
 查看公网IP.zip压缩包结构：  
@@ -100,4 +100,4 @@ Archive:  1.94.228.53.zip
 重启Alist服务：sudo systemctl restart alist   
 
 # 验证SSL
-![4](https://s1.imagehub.cc/images/2025/04/19/7ab3decd10ff21e2497bcb70d6bce799.png)
+![9 4](https://s1.imagehub.cc/images/2025/04/28/2892944f20b3bc9c482af34bcd3a6219.png)
