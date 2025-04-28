@@ -24,39 +24,39 @@ import LinkCard from "../../components/mdx/LinkCard.astro";
 在Linux中，默认的SSH端口号为22，由于这是人尽皆知的，容易被入侵者扫描。  
 通过修改SSH的配置文件实现修改端口号：`sudo vim /etc/ssh/sshd_config`  
 端口号定义范围最大不能超过65535；也不要占用常用的端口；例如20、21等。可以自己自定义一个高位端口号。  
-![1](https://s1.imagehub.cc/images/2025/03/17/492e3464e9b1b5eb8fdf8530d3613f35.png)
+![1](https://s1.imagehub.cc/images/2025/04/28/62835fbd3100bbaa063f6b8424fced10.png)
 使用`sudo systemctl restart sshd && systemctl status sshd`命令重启ssh服务并查看状态。  
-![2](https://s1.imagehub.cc/images/2025/03/17/e9c61e2aba32533790fc5cce17979c1c.png)
+![2](https://s1.imagehub.cc/images/2025/04/28/018da7dd6fe13e4707b75e98e693dc4e.png)
 或者使用：`lsof -i:62771`查看62771端口占用情况。  
-![9](https://s1.imagehub.cc/images/2025/03/18/8b91cf2394f78115c42b53e62219db1d.png)
+![9](https://s1.imagehub.cc/images/2025/04/28/d9e0ec49e6f068dbe50385b3fa172f94.png)
 
 # 禁止Root用户SSH登录
 禁止Root用户SSH登录可以直接防御暴力破解。Root用户是Linux系统的默认超级用户，攻击者会优先尝试此账户。  
 通过修改SSH的配置文件实现禁止Root用户登录：`sudo vim /etc/ssh/sshd_config`。  
 将`PermitRootLogin yes`修改为`PermitRootLogin no`。  
-![3](https://s1.imagehub.cc/images/2025/03/17/c90c5db48ebaca1b2e37bae45714c850.png)
+![3](https://s1.imagehub.cc/images/2025/04/28/5971000533b6d68d41629d86d047c77f.png)
 最后重启ssh服务`sudo systemctl restart sshd`即可。  
 
 # 创建普通用户并赋予sudo权限
 创建一个用户`testuser`并赋予sudo权限：`sudo adduser testuser`。  
-![4](https://s1.imagehub.cc/images/2025/03/17/3b19545481d0c83a745b4e07a41b460c.png)
+![4](https://s1.imagehub.cc/images/2025/04/28/845c59cdaf382cb3047649fb8d9d9500.png)
 **将testuser用户加入sudo用户组：**  
 使用命令`sudo usermod -aG sudo testuser`。  
-![5](https://s1.imagehub.cc/images/2025/03/17/eb2c27695c5fa904c44fac80535e83e2.png)
+![5](https://s1.imagehub.cc/images/2025/04/28/0607f7a91cf309b71a20d81f2b505d85.png)
 **验证sudo权限：**  
 使用命令：`sudo -l -U testuser`验证testuser用户是否被赋予sudo权限，在输出命令中可以看到是否可以以sudo权限运行所有命令：(ALL : ALL) ALL。  
-![6](https://s1.imagehub.cc/images/2025/03/17/678fba4c204a2fdb48345397cc9f2f9f.png)
+![6](https://s1.imagehub.cc/images/2025/04/28/70f34f3c8833f020f00d23bfa5ac87dc.png)
 或者使用命令：`groups testuser`查看testuser用户的所属用户组。  
-![7](https://s1.imagehub.cc/images/2025/03/18/8f1643d5fd980a3b5aa55912ec0cfbb7.png)
+![7](https://s1.imagehub.cc/images/2025/04/28/669803369a41af48850e85d1c9039496.png)
 
 # 删除不需要的sudo权限用户
 使用命令：`sudo deluser --remove-home testuser`删除testuser用户的同时也删除testuser用户的主目录。  
-![8](https://s1.imagehub.cc/images/2025/03/18/e6b9549b28b1a6e71ba5e43688cd5da0.png)
+![8](https://s1.imagehub.cc/images/2025/04/28/51311a013543eabacdf1db5670936e03.png)
 
 # 设置SSH最大连接数
 通过修改SSH的配置文件实现设置SSH最大连接数：`sudo vim /etc/ssh/sshd_config`。 
 找到`MaxSessions`并取消注释，更改MaxSessions数值即可。  
-![10](https://s1.imagehub.cc/images/2025/03/18/a3d778816026ad0b45bba190ff807040.png)
+![10](https://s1.imagehub.cc/images/2025/04/28/ac9dbe6740bc7da7c18300903bf584c8.png)
 最后重启ssh服务`sudo systemctl restart sshd`。  
 
 # 设置SSH连接超时时间
@@ -77,9 +77,9 @@ ClientAliveCountMax 3
 ```
 
 设置ClientAliveInterval字段为600，ClientAliveCountMax为0。客户端无响应即立即断开。  
-![11](https://s1.imagehub.cc/images/2025/03/18/c9db81b9e46589ed3d2495076bbebf67.png)
+![11](https://s1.imagehub.cc/images/2025/04/28/0195bcbf6e0d81a5351ea2b463c5716f.png)
 最后重启ssh服务`sudo systemctl restart sshd`。  
 查看SSH服务状态，确认无报错。  
-![12](https://s1.imagehub.cc/images/2025/03/18/85c6a75816af362b9bff4816154ce966.png)
+![12](https://s1.imagehub.cc/images/2025/04/28/b39819f36eccf095b09336ac7194874b.png)
 查看配置是否加载：`sudo sshd -T | grep -E "clientaliveinterval|clientalivecountmax"`。  
-![13](https://s1.imagehub.cc/images/2025/03/18/ce605d8a7d6b7cd7f440d1f179b3adc2.png)
+![13](https://s1.imagehub.cc/images/2025/04/28/0e3861686d1721694dfb545bf3d0ad35.png)
