@@ -56,8 +56,8 @@ tcp   LISTEN 0      128             [::]:52221         [::]:*    users:(("sshd",
 终止所有的sshd进程， 并重新启动sshd进程。  
 `sudo killall sshd && sudo systemctl start ssh`  
 若提示killall command not found，则安装psmisc软件包，killall命令属于psmisc软件包，默认可能未安装。  
-`sudo apt update && sudo apt install psmisc`
-再次尝试使用22端口进行SSH连接，连接超时。  
+使用`sudo apt update && sudo apt install psmisc`安装psmisc软件包。  
+再次尝试使用22端口进行SSH连接，则连接超时。  
 
 # 禁止Root用户SSH登录
 禁止Root用户SSH登录可以直接防御暴力破解。Root用户是Linux系统的默认超级用户，攻击者会优先尝试此账户。  
