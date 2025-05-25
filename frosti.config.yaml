@@ -65,10 +65,10 @@ site:
       href: "https://stats.uptimerobot.com/WeknJyR7fh"
       svg: "material-symbols:monitor-heart-outline-rounded"  # 使用心跳监测图标
       target: _blank
-      - id: contact
+    - id: contact
       text: Contact
       href: "mailto:contact.f0rever@aliyun.com"
-      target: _blank # 在新标签页打开
+      target: _blank
       svg: "material-symbols:attach-email-outline-rounded"
 
 # 用户的个人信息
