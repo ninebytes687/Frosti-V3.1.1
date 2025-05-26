@@ -37,7 +37,7 @@ site:
         - id: life
           text: Life Blogs
           href: /blog/category/life
-          svg: "material-symbols:earthquake-rounded"
+          svg: "ri:cup-line"
           target: _self
         - id: study
           text:  Study Blogs
