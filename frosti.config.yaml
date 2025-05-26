@@ -67,7 +67,7 @@ site:
       target: _blank
     - id: contact
       text: Contact
-      href: "mailto:contact.f0rever@aliyun.com"
+      href: "mailto:contact.ninebytes@ninebytes.top"
       target: _blank
       svg: "material-symbols:attach-email-outline-rounded"
 
