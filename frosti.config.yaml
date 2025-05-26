@@ -34,15 +34,15 @@ site:
           href: /blog/category/tech
           svg: "material-symbols:deployed-code-outline"
           target: _self
-        - id: study
-          text:  Study Blogs
-          href: /blog/category/study
-          svg: "material-symbols:digital-wellbeing"
-          target: _self
         - id: life
           text: Life Blogs
           href: /blog/category/life
           svg: "material-symbols:earthquake-rounded"
+          target: _self
+        - id: study
+          text:  Study Blogs
+          href: /blog/category/study
+          svg: "material-symbols:digital-wellbeing"
           target: _self
         # 子菜单项配置
     - id: project
