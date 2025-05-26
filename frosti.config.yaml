@@ -42,7 +42,7 @@ site:
         - id: study
           text:  Study Blogs
           href: /blog/category/study
-          svg: "material-symbols:digital-wellbeing"
+          svg: "lucide:book-open-text"
           target: _self
         # 子菜单项配置
     - id: project
