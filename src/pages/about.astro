@@ -90,6 +90,146 @@ import GitHubStats from "@/components/mdx/GitHubStats.astro";
           }
         </div>
       </section>
+
+      <!-- 新增的历史时间线部分 -->
+      <section>
+        <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+          <Icon name="lucide:history" class="w-6 h-6 text-primary" />
+          <span>Blog Journey</span>
+        </h2>
+
+        <div class="relative">
+          <!-- 时间线SVG主线 -->
+          <svg class="hidden md:block absolute left-1/2 transform -translate-x-1/2 h-full w-1" viewBox="0 0 1 100%" preserveAspectRatio="none">
+            <line x1="0" y1="0" x2="0" y2="100%" stroke="currentColor" stroke-width="1" stroke-dasharray="5,5" class="text-primary/30" />
+          </svg>
+
+          <div class="space-y-8">
+            <!-- 时间线项目1 -->
+            <div class="relative flex flex-col md:flex-row items-center md:items-start gap-4 group">
+              <!-- 时间点标记 (移动端) -->
+              <div class="md:hidden w-4 h-4 rounded-full bg-primary border-4 border-base-100 z-10"></div>
+              <!-- 时间点标记 (桌面端) -->
+              <div class="hidden md:block w-4 h-4 rounded-full bg-primary border-4 border-base-100 absolute left-1/2 transform -translate-x-1/2 z-10"></div>
+              
+              <!-- 时间线内容 -->
+              <div class="md:w-5/12 md:pr-8 md:text-right">
+                <time class="text-sm text-primary font-mono">2023.10</time>
+                <h3 class="text-lg font-bold">Blog Inception</h3>
+                <p class="text-base-content/80">Initial idea and planning for the blog</p>
+              </div>
+              
+              <div class="hidden md:block md:w-2/12 flex justify-center">
+                <div class="w-8 h-8 flex items-center justify-center rounded-full bg-primary/10 text-primary">
+                  <Icon name="lucide:lightbulb" class="w-5 h-5" />
+                </div>
+              </div>
+              
+              <div class="md:w-5/12 md:pl-8">
+                <div class="hidden md:block"></div>
+              </div>
+            </div>
+
+            <!-- 时间线项目2 -->
+            <div class="relative flex flex-col md:flex-row items-center md:items-start gap-4 group">
+              <div class="md:hidden w-4 h-4 rounded-full bg-primary border-4 border-base-100 z-10"></div>
+              <div class="hidden md:block w-4 h-4 rounded-full bg-primary border-4 border-base-100 absolute left-1/2 transform -translate-x-1/2 z-10"></div>
+              
+              <div class="md:w-5/12 md:pr-8 md:text-right">
+                <div class="hidden md:block"></div>
+              </div>
+              
+              <div class="hidden md:block md:w-2/12 flex justify-center">
+                <div class="w-8 h-8 flex items-center justify-center rounded-full bg-primary/10 text-primary">
+                  <Icon name="lucide:code" class="w-5 h-5" />
+                </div>
+              </div>
+              
+              <div class="md:w-5/12 md:pl-8">
+                <time class="text-sm text-primary font-mono">2024.02</time>
+                <h3 class="text-lg font-bold">First Version</h3>
+                <p class="text-base-content/80">Launched initial version with basic features</p>
+              </div>
+            </div>
+
+            <!-- 时间线项目3 -->
+            <div class="relative flex flex-col md:flex-row items-center md:items-start gap-4 group">
+              <div class="md:hidden w-4 h-4 rounded-full bg-primary border-4 border-base-100 z-10"></div>
+              <div class="hidden md:block w-4 h-4 rounded-full bg-primary border-4 border-base-100 absolute left-1/2 transform -translate-x-1/2 z-10"></div>
+              
+              <div class="md:w-5/12 md:pr-8 md:text-right">
+                <time class="text-sm text-primary font-mono">2024.05</time>
+                <h3 class="text-lg font-bold">Astro Migration</h3>
+                <p class="text-base-content/80">Rewrote the blog using Astro framework</p>
+              </div>
+              
+              <div class="hidden md:block md:w-2/12 flex justify-center">
+                <div class="w-8 h-8 flex items-center justify-center rounded-full bg-primary/10 text-primary">
+                  <Icon name="simple-icons:astro" class="w-5 h-5" />
+                </div>
+              </div>
+              
+              <div class="md:w-5/12 md:pl-8">
+                <div class="hidden md:block"></div>
+              </div>
+            </div>
+
+            <!-- 时间线项目4 -->
+            <div class="relative flex flex-col md:flex-row items-center md:items-start gap-4 group">
+              <div class="md:hidden w-4 h-4 rounded-full bg-primary border-4 border-base-100 z-10"></div>
+              <div class="hidden md:block w-4 h-4 rounded-full bg-primary border-4 border-base-100 absolute left-1/2 transform -translate-x-1/2 z-10"></div>
+              
+              <div class="md:w-5/12 md:pr-8 md:text-right">
+                <div class="hidden md:block"></div>
+              </div>
+              
+              <div class="hidden md:block md:w-2/12 flex justify-center">
+                <div class="w-8 h-8 flex items-center justify-center rounded-full bg-primary/10 text-primary">
+                  <Icon name="lucide:rocket" class="w-5 h-5" />
+                </div>
+              </div>
+              
+              <div class="md:w-5/12 md:pl-8">
+                <time class="text-sm text-primary font-mono">2024.08</time>
+                <h3 class="text-lg font-bold">Open Source</h3>
+                <p class="text-base-content/80">Published theme as open source project</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </MainCard>
+</BaseLayout>          <Icon name="lucide:code-2" class="w-6 h-6 text-primary" />
+          <span>Blog Theme Tech Stack</span>
+        </h2>
+
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+          {
+            [
+              { name: "Astro", icon: "simple-icons:astro", color: "oklch(0.5 0.2 300)" },
+              { name: "JavaScript", icon: "simple-icons:javascript", color: "oklch(0.8 0.2 80)" },
+              { name: "TypeScript", icon: "simple-icons:typescript", color: "oklch(0.6 0.2 250)" },
+              { name: "React", icon: "simple-icons:react", color: "oklch(0.7 0.2 200)" },
+              { name: "Node.js", icon: "simple-icons:nodedotjs", color: "oklch(0.7 0.2 140)" },
+              { name: "TailwindCSS", icon: "simple-icons:tailwindcss", color: "oklch(0.6 0.2 220)" },
+              { name: "HTML5", icon: "simple-icons:html5", color: "oklch(0.7 0.2 30)" },
+              { name: "CSS3", icon: "simple-icons:css3", color: "oklch(0.7 0.2 220)" },
+              { name: "Git", icon: "simple-icons:git", color: "oklch(0.7 0.2 30)" },
+              { name: "C++", icon: "simple-icons:cplusplus", color: "oklch(0.6 0.2 240)" },
+              { name: "C#", icon: "simple-icons:csharp", color: "oklch(0.6 0.2 160)" },
+              { name: "Python", icon: "simple-icons:python", color: "oklch(0.7 0.2 250)" },
+            ].map((tech) => (
+              <div class="flex flex-col items-center justify-center p-4 bg-base-200 rounded-lg hover:bg-base-300 transition-colors">
+                <div class="text-3xl mb-2" style={`color: ${tech.color}`}>
+                  <Icon name={tech.icon} class="w-10 h-10" />
+                </div>
+                <span class="text-sm font-medium">{tech.name}</span>
+              </div>
+            ))
+          }
+        </div>
+      </section>
     </div>
   </MainCard>
 </BaseLayout>
