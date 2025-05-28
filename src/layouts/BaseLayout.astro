@@ -9,8 +9,6 @@ import Sidebar from "@components/Sidebar.astro";
 import Footer from "@components/Footer.astro";
 import Navbar from "@components/Navbar.astro";
 import MobileTOC from "@components/widgets/MobileTOC.astro";
-// +++ 新增导入 +++
-import Waline from "@components/comments/Waline.astro";
 
 const { title, image, headings = [], showTOC = false } = Astro.props;
 ---
@@ -24,12 +22,6 @@ const { title, image, headings = [], showTOC = false } = Astro.props;
     <Header description={SITE_DESCRIPTION} favicon={SITE_FAVICON} image={image} />
     <title>{`${title} - ${SITE_TAB}`}</title>
 
-    <!-- +++ 新增 Waline CSS 样式 +++ -->
-    <link
-      rel="stylesheet"
-      href="https://unpkg.com/@waline/client@v3/dist/waline.css"
-    />
-    
     <!-- Initial theme setup on first load -->
     <script define:vars={{ SITE_THEME }} is:inline>
       (function () {
@@ -69,13 +61,6 @@ const { title, image, headings = [], showTOC = false } = Astro.props;
         <main class="col-span-1 md:col-span-4 lg:col-span-3 bg-transparent order-1 md:order-2 mt-16 md:mt-0">
           <div class="flex flex-col gap-4">
             <slot />
-            
-            <!-- +++ 新增评论区域 +++ -->
-            <section class="comments mt-12 p-4 bg-base-100 rounded-lg shadow-sm">
-              <h2 class="text-2xl font-bold mb-4">评论</h2>
-              <Waline serverURL="https://blogcomments.ninebytes.top" />
-            </section>
-            
             <Footer />
           </div>
         </main>
@@ -160,27 +145,6 @@ const { title, image, headings = [], showTOC = false } = Astro.props;
         100% {
           transform: scale(1);
         }
-      }
-      
-      /* +++ 新增 Waline 样式适配 +++ */
-      :root {
-        --waline-theme-color: hsl(var(--p));
-        --waline-active-color: hsl(var(--pf));
-        --waline-bgcolor: hsl(var(--b1));
-        --waline-bgcolor-light: hsl(var(--b2));
-        --waline-border-color: hsl(var(--bc)/0.2);
-        --waline-text-color: hsl(var(--bc));
-        --waline-info-bgcolor: hsl(var(--b2));
-      }
-      
-      [data-theme="dark"] {
-        --waline-theme-color: hsl(var(--p));
-        --waline-active-color: hsl(var(--pf));
-        --waline-bgcolor: hsl(var(--b3));
-        --waline-bgcolor-light: hsl(var(--b2));
-        --waline-border-color: hsl(var(--bc)/0.2);
-        --waline-text-color: hsl(var(--bc));
-        --waline-info-bgcolor: hsl(var(--b2));
       }
     </style>
   </body>
