@@ -1,0 +1,19 @@
+---
+// src/layouts/PostLayout.astro
+import BaseLayout from "./BaseLayout.astro";
+import Waline from "@components/comments/Waline.astro";
+
+const { title, image, headings = [], showTOC = false } = Astro.props;
+---
+
+<BaseLayout title={title} image={image} headings={headings} showTOC={showTOC}>
+  <article>
+    <slot />
+  </article>
+
+  <!-- 只在文章页显示的评论区域 -->
+  <section class="comments mt-12 p-4 bg-base-100 rounded-lg shadow-sm">
+    <h2 class="text-2xl font-bold mb-4">评论</h2>
+    <Waline serverURL="https://blogcomments.ninebytes.top" />
+  </section>
+</BaseLayout>
