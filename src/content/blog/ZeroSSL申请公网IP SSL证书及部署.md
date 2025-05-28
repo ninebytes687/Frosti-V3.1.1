@@ -1,6 +1,6 @@
 ---
 title: "ZeroSSL申请公网IP SSL证书及部署"
-description: ""
+description: "提升数据安全性"
 pubDate: "Apr 19 2025"
 image: "https://s21.ax1x.com/2025/04/19/pE4u4Z4.png"
 categories:
@@ -14,7 +14,7 @@ tags:
 # 前言
 我有一台国内的Debian12云服务器，我只拿它运行Alist。  
 因为我的域名是在NameSilo购买的，无法直接进行域名备案，只能申请公网IP证书。  
-ZeroSSL有免费的90D公网IP证书，本文章使用ZeroSSL进行公网IP证书的申请及部署。  
+ZeroSSL有免费的90Day公网IP证书，本文章使用ZeroSSL进行公网IP证书的申请及部署。  
 （~~其实我也懒得备案，流程太麻烦了~~）  
 
 # 注册ZeroSSL
