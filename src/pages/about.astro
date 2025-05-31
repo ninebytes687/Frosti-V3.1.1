@@ -16,9 +16,7 @@ import GitHubStats from "@/components/mdx/GitHubStats.astro";
       <!-- Profile Section -->
       <section class="flex flex-col md:flex-row gap-8 items-center md:items-start">
         <div class="avatar">
-          <div
-            class="w-32 h-32 md:w-40 md:h-40 rounded-xl ring ring-primary ring-offset-base-100 ring-offset-2 overflow-hidden"
-          >
+          <div class="w-32 h-32 md:w-40 md:h-40 rounded-xl ring ring-primary ring-offset-base-100 ring-offset-2 overflow-hidden">
             <img src="https://s21.ax1x.com/2025/04/14/pEWI3K1.png" alt="NineBytes" width="160" height="160" loading="eager" />
           </div>
         </div>
@@ -28,12 +26,7 @@ import GitHubStats from "@/components/mdx/GitHubStats.astro";
           <p class="text-xl text-base-content/80 mb-4">Open-source enthusiast and Linux advocate.</p>
 
           <div class="flex flex-wrap gap-3 justify-center md:justify-start mb-6">
-            <a
-              href="https://github.com/ninebytes687"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="btn btn-sm btn-outline gap-2"
-            >
+            <a href="https://github.com/ninebytes687" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline gap-2">
               <Icon name="lucide:github" class="w-4 h-4" />
               <span>GitHub</span>
             </a>
@@ -90,7 +83,10 @@ import GitHubStats from "@/components/mdx/GitHubStats.astro";
 
       <!-- Timeline Section -->
       <section class="space-y-8 mt-12">
-        <h2 class="text-2xl font-bold mb-6">Website Timeline</h2>
+        <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+          <Icon name="lucide:history" class="w-6 h-6 text-primary" />
+          <span>Website Timeline</span>
+        </h2>
         
         <div class="flex gap-4">
           <div class="flex flex-col items-center">
@@ -218,6 +214,46 @@ import GitHubStats from "@/components/mdx/GitHubStats.astro";
         </div>
       </section>
       <!-- Timeline Section End -->
+
+      <!-- Others Section -->
+      <section class="space-y-4 mt-12">
+        <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+          <Icon name="lucide:info" class="w-6 h-6 text-primary" />
+          <span>Others</span>
+        </h2>
+
+        <div class="prose prose-sm max-w-none text-base-content/80">
+          <h3 class="text-lg font-semibold">版权声明</h3>
+          <p>
+            本博客所有原创内容（包括文章、图片、代码等）版权归
+            <a href="https://blog.ninebytes.top/" target="_blank" rel="noopener noreferrer" class="link link-primary font-semibold">
+              NineBytes
+            </a> 
+              所有，采用
+            <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener noreferrer" class="link link-primary">
+              CC BY-NC-SA 4.0
+            </a>
+            许可协议。转载文章请注明文章出处。
+          </p>
+          
+          <h3 class="text-lg font-semibold mt-4">侵权声明</h3>
+          <p>
+            本站部分内容可能来源于网络，仅供学习交流。如无意中侵犯了您的权益，请通过以下方式联系删除：
+            <br />
+            邮箱📧：<a href="mailto:ninebytes@ninebytes.top" class="link link-primary">ninebytes@ninebytes.top</a>
+            <br />
+            （请提供具体链接及权属证明，我们将在核实后48小时内处理。）
+          </p>
+          
+          <div class="not-prose mt-6">
+            <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener noreferrer"class="btn btn-sm btn-ghost gap-2">
+              <Icon name="simple-icons:creativecommons" class="w-4 h-4" />
+              <span>CC BY-NC-SA 4.0</span>
+            </a>
+          </div>
+        </div>
+      </section>
+      <!-- Others Section End -->
       
     </div>
   </MainCard>
