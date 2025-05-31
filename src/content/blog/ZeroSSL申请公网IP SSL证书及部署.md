@@ -65,7 +65,7 @@ nginx: configuration file /etc/nginx/nginx.conf test is successful
 我们需要的是服务器证书和私钥文件，即：certificate.crt和private.key。  
 ```
 ninebytes@hcss-ecs-fc21:~$ unzip -l 公网IP.zip 
-Archive:  1.94.228.53.zip
+Archive:  公网IP.zip
   Length      Date    Time    Name
 ---------  ---------- -----   ----
      2269  2025-04-19 04:24   certificate.crt
