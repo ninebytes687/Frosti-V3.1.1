@@ -1313,7 +1313,7 @@ ansible test1_servers -i /etc/ansible/inventory2.ini -m user -a "name=testuser s
     "stderr_lines": [
         "userdel: testuser mail spool (/var/spool/mail/testuser) not found"
     ]
-}`
+}
 ```
 **邮件目录的作用**：  
 大多数Linux发行版（如CentOS、RHEL、Ubuntu等）在创建用户时，会自动在/var/spool/mail/下生成一个与用户名同名的邮件文件。  
@@ -1353,27 +1353,6 @@ ansible test1_servers -i /etc/ansible/inventory2.ini -m user -a "name=testuser s
 id_ecdsa
 id_ecdsa.pub
 ```
-
-```shell
-[root@server ~]# ansible test1_servers -i /etc/ansible/inventory2.ini -m user -a "name=testuser3 groups=ninebytes_admin append=yes expires=1748775600"
-192.168.201.12 | CHANGED => {
-    "ansible_facts": {
-        "discovered_interpreter_python": "/usr/bin/python3"
-    },
-    "changed": true,
-    "comment": "",
-    "create_home": true,
-    "group": 1004,
-    "groups": "ninebytes_admin",
-    "home": "/home/testuser3",
-    "name": "testuser3",
-    "shell": "/bin/bash",
-    "state": "present",
-    "system": false,
-    "uid": 1002
-}
-```
-
 **【4】**：test1_servers组内所有主机创建用户testuser3，设置登录密码为123456，加入用户组ninebytes_admin，且不影响用户原本加入的用户组，设置过期时间戳为1748822400，创建用户家目录。  
 ```shell
 [root@server ~]# ansible test1_servers -i /etc/ansible/inventory2.ini -m user -a "name=testuser3 password=$PASS_HASH groups=ninebytes_admin append=yes expires=1748822400 create_home=yes"
@@ -1430,3 +1409,57 @@ Number of days of warning before password expires       : 7
 [root@server ~]# date -d @1748822400 '+%Y-%m-%d %H:%M:%S %z'
 2025-06-02 08:00:00 +0800
 ```
+## file
+**作用：**  
+file模块是Ansible中用于管理文件和目录的核心模块之一，它可以创建文件、目录、符号链接，设置权限和属性，以及删除文件系统对象。  
+file和copy模块不同的是，file可以直接在被控主机上创建或删除文件/文件夹，但copy模块仅仅是将管理节点上的文件/文件夹复制到被控主机上。  
+
+file模块的作用包括但不限于以下：  
+- 创建空文件
+- 创建目录（包括多级目录）
+- 创建符号链接（软链接）
+- 修改文件/目录的权限、所有者、组等属性
+- 删除文件、目录或链接
+- 修改文件/目录的SElinux上下文
+
+**常用参数：**  
+- path：文件/目录的路径，为必选项；  
+- state：状态：
+  - file(默认)：常用于检查文件是否存在，存在则返回文件信息，不存在则不会被创建；  
+  - directory：如果目录不存在，则创建目录；  
+  - link：创建软链接；  
+  - hard：创建硬链接；  
+  - touch：若文件不存在，则会创建一个新文件，存在则仅更新其最后修改时间；  
+  - absent：删除目录、文件或取消链接文件；  
+
+- mode：设置权限模式（八进制或符号表示），mode: '0644'或mode: u=rw,g=r,o=r；  
+- owner：设置文件所有者；  
+- group：设置文件所属组；  
+- recurse：递归设置目录下文件的属性，仅对目录有效；  
+- src：软/硬链接的源文件的路径，当state=link或state=hard时使用；  
+- dest：链接文件的路径，当state=link或state=hard时使用；  
+- force：强制创建链接（会覆盖现有文件）；  
+- follow：是否跟踪符号链接；  
+- seuser/serole/setype/selevel：SELinux相关属性；  
+
+**Example：**  
+**【1】**：test1_servers组内所有主机在/tmp下创建test.conf文件。  
+```shell
+[root@server ~]# ansible test1_servers -i /etc/ansible/inventory2.ini -m file -a "path=/tmp/test.conf state=touch"
+192.168.201.12 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "dest": "/tmp/test.conf",
+    "gid": 0,
+    "group": "root",
+    "mode": "0644",
+    "owner": "root",
+    "secontext": "unconfined_u:object_r:user_tmp_t:s0",
+    "size": 0,
+    "state": "file",
+    "uid": 0
+}
+```
+**【2】**：改变/tmp/test.conf文件所有者及其权限。  
