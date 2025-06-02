@@ -1431,13 +1431,12 @@ file模块的作用包括但不限于以下：
   - hard：创建硬链接；  
   - touch：若文件不存在，则会创建一个新文件，存在则仅更新其最后修改时间；  
   - absent：删除目录、文件或取消链接文件；  
-
-- mode：设置权限模式（八进制或符号表示），mode: '0644'或mode: u=rw,g=r,o=r；  
+- mode：设置权限模式，八进制或符号表示：mode：0644或mode：u=rw,g=r,o=r；  
 - owner：设置文件所有者；  
 - group：设置文件所属组；  
 - recurse：递归设置目录下文件的属性，仅对目录有效；  
 - src：软/硬链接的源文件的路径，当state=link或state=hard时使用；  
-- dest：链接文件的路径，当state=link或state=hard时使用；  
+- dest：软/硬链接文件的路径，当state=link或state=hard时使用；  
 - force：强制创建链接（会覆盖现有文件）；  
 - follow：是否跟踪符号链接；  
 - seuser/serole/setype/selevel：SELinux相关属性；  
@@ -1462,4 +1461,334 @@ file模块的作用包括但不限于以下：
     "uid": 0
 }
 ```
-**【2】**：改变/tmp/test.conf文件所有者及其权限。  
+**【2】**：改变/tmp/test.conf文件所有者为nobody，权限改为644。  
+```shell
+[root@server ~]# ansible test1_servers -i /etc/ansible/inventory2.ini -m file -a "path=/tmp/test.conf owner=nobody group=nobody mode=0644"
+192.168.201.12 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "gid": 65534,
+    "group": "nobody",
+    "mode": "0644",
+    "owner": "nobody",
+    "path": "/tmp/test.conf",
+    "secontext": "unconfined_u:object_r:user_tmp_t:s0",
+    "size": 0,
+    "state": "file",
+    "uid": 65534 #nobody用户的UID；
+}
+```
+**【3】**：为/tmp/test.conf创建软链接。  
+```shell
+[root@server ~]# ansible test1_servers -i /etc/ansible/inventory2.ini -m file -a "src=/tmp/test.conf dest=/tmp/test.link.conf state=link"
+192.168.201.12 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "dest": "/tmp/test.link.conf", #软链接文件路径；
+    "gid": 0,
+    "group": "root",
+    "mode": "0777",
+    "owner": "root",
+    "secontext": "unconfined_u:object_r:user_tmp_t:s0",
+    "size": 14,
+    "src": "/tmp/test.conf", #软链接源文件路径；
+    "state": "link", #状态为软/硬链接；
+    "uid": 0
+}
+```
+验证软链接：  
+```shell
+[root@server ~]# ansible test1_servers -i /etc/ansible/inventory2.ini -m shell -a "ls -l /tmp"
+192.168.201.12 | CHANGED | rc=0 >>
+total 0
+drwx------. 2 root   root   56 Jun  2 15:19 ansible_ansible.legacy.command_payload_el631vwh
+drwxr-xr-x. 2 root   root   19 Apr 16 20:25 hsperfdata_root
+drwx------. 3 root   root   17 Mar 22 12:25 systemd-private-084dc7114c6f43279ad87767c4f39c44-bluetooth.service-gKgP3G
+drwx------. 3 root   root   17 Mar 22 12:25 systemd-private-084dc7114c6f43279ad87767c4f39c44-chronyd.service-YDHbNy
+drwx------. 3 root   root   17 Mar 22 12:25 systemd-private-084dc7114c6f43279ad87767c4f39c44-dbus-broker.service-i5eBCf
+drwx------. 3 root   root   17 Mar 22 12:25 systemd-private-084dc7114c6f43279ad87767c4f39c44-kdump.service-Tl8A1S
+drwx------. 3 root   root   17 Apr 16 21:40 systemd-private-084dc7114c6f43279ad87767c4f39c44-nginx.service-h6tWUO
+drwx------. 3 root   root   17 Mar 22 12:25 systemd-private-084dc7114c6f43279ad87767c4f39c44-systemd-logind.service-Nd78xF
+-rw-r--r--. 1 nobody nobody  0 Jun  2 00:38 test.conf #软链接源文件；
+lrwxrwxrwx. 1 root   root   14 Jun  2 15:15 test.link.conf -> /tmp/test.conf #test.link.conf软链接文件指向/tmp/test.conf；
+drwx------. 2 root   root    6 Apr 16 17:06 vmware-root_869-3988752892
+```
+**【4】**：在/tmp下创建目录testdir。  
+```shell
+[root@server ~]# ansible test1_servers -i /etc/ansible/inventory2.ini -m file -a "path=/tmp/testdir state=directory"
+192.168.201.12 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "gid": 0,
+    "group": "root",
+    "mode": "0755",
+    "owner": "root",
+    "path": "/tmp/testdir",
+    "secontext": "unconfined_u:object_r:user_tmp_t:s0",
+    "size": 6,
+    "state": "directory",
+    "uid": 0
+}
+```
+验证目录testdir：  
+```shell
+[root@server ~]# ansible test1_servers -i /etc/ansible/inventory2.ini -m shell -a "ls -l /tmp"
+192.168.201.12 | CHANGED | rc=0 >>
+total 0
+drwx------. 2 root   root   56 Jun  2 15:33 ansible_ansible.legacy.command_payload_kyjyun2s
+drwxr-xr-x. 2 root   root   19 Apr 16 20:25 hsperfdata_root
+drwx------. 3 root   root   17 Mar 22 12:25 systemd-private-084dc7114c6f43279ad87767c4f39c44-bluetooth.service-gKgP3G
+drwx------. 3 root   root   17 Mar 22 12:25 systemd-private-084dc7114c6f43279ad87767c4f39c44-chronyd.service-YDHbNy
+drwx------. 3 root   root   17 Mar 22 12:25 systemd-private-084dc7114c6f43279ad87767c4f39c44-dbus-broker.service-i5eBCf
+drwx------. 3 root   root   17 Mar 22 12:25 systemd-private-084dc7114c6f43279ad87767c4f39c44-kdump.service-Tl8A1S
+drwx------. 3 root   root   17 Apr 16 21:40 systemd-private-084dc7114c6f43279ad87767c4f39c44-nginx.service-h6tWUO
+drwx------. 3 root   root   17 Mar 22 12:25 systemd-private-084dc7114c6f43279ad87767c4f39c44-systemd-logind.service-Nd78xF
+-rw-r--r--. 1 nobody nobody  0 Jun  2 00:38 test.conf
+drwxr-xr-x. 2 root   root    6 Jun  2 15:32 testdir
+lrwxrwxrwx. 1 root   root   14 Jun  2 15:15 test.link.conf -> /tmp/test.conf
+drwx------. 2 root   root    6 Apr 16 17:06 vmware-root_869-3988752892
+```
+**【5】**：取消/tmp/test.link.conf对/tmp/test.conf的软链接。  
+```shell
+[root@server ~]# ansible test1_servers -i /etc/ansible/inventory2.ini -m file -a "path=/tmp/test.link.conf state=absent"
+192.168.201.12 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "path": "/tmp/test.link.conf",
+    "state": "absent"
+}
+```
+验证取消软链接：  
+```shell
+[root@server ~]# ansible test1_servers -i /etc/ansible/inventory2.ini -m shell -a "ls -l /tmp"
+192.168.201.12 | CHANGED | rc=0 >>
+total 0
+drwx------. 2 root   root   56 Jun  2 15:37 ansible_ansible.legacy.command_payload_q7j058e5
+drwxr-xr-x. 2 root   root   19 Apr 16 20:25 hsperfdata_root
+drwx------. 3 root   root   17 Mar 22 12:25 systemd-private-084dc7114c6f43279ad87767c4f39c44-bluetooth.service-gKgP3G
+drwx------. 3 root   root   17 Mar 22 12:25 systemd-private-084dc7114c6f43279ad87767c4f39c44-chronyd.service-YDHbNy
+drwx------. 3 root   root   17 Mar 22 12:25 systemd-private-084dc7114c6f43279ad87767c4f39c44-dbus-broker.service-i5eBCf
+drwx------. 3 root   root   17 Mar 22 12:25 systemd-private-084dc7114c6f43279ad87767c4f39c44-kdump.service-Tl8A1S
+drwx------. 3 root   root   17 Apr 16 21:40 systemd-private-084dc7114c6f43279ad87767c4f39c44-nginx.service-h6tWUO
+drwx------. 3 root   root   17 Mar 22 12:25 systemd-private-084dc7114c6f43279ad87767c4f39c44-systemd-logind.service-Nd78xF
+-rw-r--r--. 1 nobody nobody  0 Jun  2 00:38 test.conf
+drwxr-xr-x. 2 root   root    6 Jun  2 15:32 testdir
+drwx------. 2 root   root    6 Apr 16 17:06 vmware-root_869-3988752892
+```
+**【6】**：删除/tmp/test.conf。  
+```shell
+[root@server ~]# ansible test1_servers -i /etc/ansible/inventory2.ini -m file -a "path=/tmp/test.conf state=absent"
+192.168.201.12 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "path": "/tmp/test.conf",
+    "state": "absent"
+}
+```
+验证删除/tmp/test.conf：  
+```shell
+[root@server ~]# ansible test1_servers -i /etc/ansible/inventory2.ini -m shell -a "ls -l /tmp"
+192.168.201.12 | CHANGED | rc=0 >>
+total 0
+drwx------. 2 root root 56 Jun  2 15:39 ansible_ansible.legacy.command_payload_i5xivqxc
+drwxr-xr-x. 2 root root 19 Apr 16 20:25 hsperfdata_root
+drwx------. 3 root root 17 Mar 22 12:25 systemd-private-084dc7114c6f43279ad87767c4f39c44-bluetooth.service-gKgP3G
+drwx------. 3 root root 17 Mar 22 12:25 systemd-private-084dc7114c6f43279ad87767c4f39c44-chronyd.service-YDHbNy
+drwx------. 3 root root 17 Mar 22 12:25 systemd-private-084dc7114c6f43279ad87767c4f39c44-dbus-broker.service-i5eBCf
+drwx------. 3 root root 17 Mar 22 12:25 systemd-private-084dc7114c6f43279ad87767c4f39c44-kdump.service-Tl8A1S
+drwx------. 3 root root 17 Apr 16 21:40 systemd-private-084dc7114c6f43279ad87767c4f39c44-nginx.service-h6tWUO
+drwx------. 3 root root 17 Mar 22 12:25 systemd-private-084dc7114c6f43279ad87767c4f39c44-systemd-logind.service-Nd78xF
+drwxr-xr-x. 2 root root  6 Jun  2 15:32 testdir
+drwx------. 2 root root  6 Apr 16 17:06 vmware-root_869-3988752892
+```
+**【7】**：为/etc/yum.repos.d创建硬链接到/tmp/rocky.hard.repo。  
+```shell
+[root@server ~]# ansible test1_servers -i /etc/ansible/inventory2.ini -m file -a "src=/etc/yum.repos.d/rocky.repo dest=/tmp/rocky.hard.repo state=hard"
+192.168.201.12 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "dest": "/tmp/rocky.hard.repo",
+    "gid": 0,
+    "group": "root",
+    "mode": "0644",
+    "owner": "root",
+    "secontext": "system_u:object_r:system_conf_t:s0",
+    "size": 406,
+    "src": "/etc/yum.repos.d/rocky.repo",
+    "state": "hard",
+    "uid": 0
+}
+```
+验证硬链接：  
+```shell
+[root@server ~]# ansible test1_servers -i /etc/ansible/inventory2.ini -m shell -a "ls -l /tmp"
+192.168.201.12 | CHANGED | rc=0 >>
+total 4
+drwx------. 2 root root  56 Jun  2 15:57 ansible_ansible.legacy.command_payload_dqbgpf63
+drwxr-xr-x. 2 root root  19 Apr 16 20:25 hsperfdata_root
+-rw-r--r--. 2 root root 406 Apr 15 20:49 rocky.hard.repo
+drwx------. 3 root root  17 Mar 22 12:25 systemd-private-084dc7114c6f43279ad87767c4f39c44-bluetooth.service-gKgP3G
+drwx------. 3 root root  17 Mar 22 12:25 systemd-private-084dc7114c6f43279ad87767c4f39c44-chronyd.service-YDHbNy
+drwx------. 3 root root  17 Mar 22 12:25 systemd-private-084dc7114c6f43279ad87767c4f39c44-dbus-broker.service-i5eBCf
+drwx------. 3 root root  17 Mar 22 12:25 systemd-private-084dc7114c6f43279ad87767c4f39c44-kdump.service-Tl8A1S
+drwx------. 3 root root  17 Apr 16 21:40 systemd-private-084dc7114c6f43279ad87767c4f39c44-nginx.service-h6tWUO
+drwx------. 3 root root  17 Mar 22 12:25 systemd-private-084dc7114c6f43279ad87767c4f39c44-systemd-logind.service-Nd78xF
+drwxr-xr-x. 2 root root   6 Jun  2 15:32 testdir
+drwx------. 2 root root   6 Apr 16 17:06 vmware-root_869-3988752892
+```
+
+## cron
+**作用：**  
+cron模块用于管理被控端计划任务，等同于linux中的计划任务。  
+- 注意：使用Ansible创建的计划任务不能使用本地`crontab -e`编辑，否则Ansible将无法再次操作此计划任务。  
+
+**主要原因：**  
+1. 文件位置不同：  
+    - Ansible默认将cron任务写入/var/spool/cron/目录下的用户专用文件（如 var/spool/cron/root）；  
+    - crontab -e会将这些内容复制到临时文件编辑，但源文件仍由Ansible管理；  
+2. 格式差异：  
+    - Ansible会自动添加注释标记（如#Ansible: Job名）；  
+    - 手动编辑可能会破坏这些标记，导致Ansible无法正确识别和管理这些任务；  
+3. 同步问题：  
+    - 手动修改后，下次Ansible运行时可能会覆盖您的更改（因为 Ansible 只认它自己管理的任务）;  
+    - Ansible 使用"声明式"配置，会强制将系统状态变为playbook中定义的状态;  
+4. 权限问题：  
+    - Ansible通常以root或特定用户身份运行;  
+    - 如果您以不同用户身份运行crontab -e，可能看不到Ansible创建的任务;  
+
+**常用参数：**  
+- name：指定一个作业名字，必选项；  
+- job：指定要执行的内容，通常是脚本或一段内容；  
+- state：指定job状态，present创建，absent删除，默认为present；  
+- user：设置作业的用户，默认为当前用户；  
+- minute：指定分钟（0-59，\*：每分钟，\*/2：每两分钟，默认为\*）；   
+- hour：指定小时（0-23，\*：每分钟，\*/2：每两分钟，默认为\*）；  
+- day：指定天数（1-31，\*，：每天，\*/2：每两天，默认为\*）；  
+- weekday：指定星期（0-6，周日为0，默认为\*，即每星期；或者输入英文单词也可以：Sunday-Saturday）；  
+- month：月（1-12，\*：每月，\*/2：每两月，默认为\*）；  
+- special_time：预设时间(如@daily, @weekly等)；  
+- disabled：是否禁用该作业，默认no；  
+- backup：是否备份修改前的crontab，默认no；  
+- env：设置环境变量；  
+
+**Example：**  
+**【1】**：为root用户创建test job作业，每天8点运行。  
+```shell
+[root@server ~]# ansible test1_servers -i /etc/ansible/inventory2.ini -m cron -a "name='test job' minute=0 hour=8 job='ls / -alh > /dev/null' user=root"
+192.168.201.12 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "envs": [],
+    "jobs": [
+        "test job"
+    ]
+}
+```
+列出当前用户的cron任务：  
+```shell
+[root@server ~]# ansible test1_servers -i /etc/ansible/inventory2.ini -m shell -a "crontab -l"
+192.168.201.12 | CHANGED | rc=0 >>
+#Ansible: test job
+0 8 * * * ls / -alh > /dev/null
+```
+- 使用sudo crontab -u username -l查看其他用户的cron任务。  
+
+**【2】**：为root用户创建complex test job作业，每工作日(周一到周五)上午9点到下午5点每小时运行一次。  
+```shell
+[root@server ~]# ansible test1_servers -i /etc/ansible/inventory2.ini -m cron -a "name='complex test job' minute=0 hour="9-17" weekday="1-5" job='ls / -alh > /dev/null' user=root"
+192.168.201.12 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "envs": [],
+    "jobs": [
+        "test job",
+        "complex test job"
+    ]
+}
+```
+
+**【3】**：删除test job任务。  
+```shell
+[root@server ~]# ansible test1_servers -i /etc/ansible/inventory2.ini -m cron -a "name='test job' state=absent"
+192.168.201.12 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "envs": [],
+    "jobs": [
+        "complex test job"
+    ]
+}
+```
+验证是否删除test job任务：  
+```shell
+[root@server ~]# ansible test1_servers -i /etc/ansible/inventory2.ini -m shell -a "crontab -l"
+192.168.201.12 | CHANGED | rc=0 >>
+#Ansible: complex test job
+0 9-17 * * 1-5 ls / -alh > /dev/null
+```
+
+**【4】**：禁用complex test job而非删除。  
+```shell
+[root@server ~]# ansible test1_servers -i /etc/ansible/inventory2.ini -m cron -a "name='complex test job' job='ls / -alh > /dev/null' disabled=yes"
+192.168.201.12 | CHANGED => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": true,
+    "envs": [],
+    "jobs": [
+        "complex test job"
+    ]
+}
+```
+- 注意：禁用作业需要同时提供name及job字段。  
+
+**原因**：  
+1. Ansible的幂等性原则：  
+
+Ansible遵循幂等性（Idempotency），即无论执行多少次，结果都应该一致。  
+    - name只是任务的标识符（用于人类可读的描述），而job才是任务的实际内容。  
+    - 如果仅凭name禁用任务，Ansible无法确保它修改的是正确的任务（因为name可能重复或不唯一）。  
+    - job是唯一能精确匹配目标任务的字段，避免误操作。  
+2. cron的底层机制：  
+
+Linux crontab本身并不存储name，Ansible是通过在crontab中添加注释来标记任务归属的。  
+    ```shell
+    #Ansible: Backup Database
+    0 3 * * * /opt/backup.sh
+    ```
+    - 禁用任务实际上是在原任务前添加#注释（但保留#Ansible标记）：
+        ```shell
+        #Ansible: Backup Database
+        #0 3 * * * /opt/backup.sh
+        ```
+    - 如果仅提供name，Ansible无法确定要注释哪一行命令（因为可能有多个任务共享相同的name）；  
+
+验证complex test job作业是否禁用：  
+```shell
+[root@server ~]# ansible test1_servers -i /etc/ansible/inventory2.ini -m shell -a "crontab -l"
+192.168.201.12 | CHANGED | rc=0 >>
+#Ansible: complex test job
+#* * * * * ls / -alh > /dev/null
+[root@server ~]# 
+```
+
+## debug
