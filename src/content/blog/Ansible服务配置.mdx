@@ -1759,7 +1759,8 @@ cron模块用于管理被控端计划任务，等同于linux中的计划任务�
     ]
 }
 ```
-- 注意：禁用作业需要同时提供name及job字段。  
+- 注意：禁用作业需要同时提供name及job字段；  
+  否则会报错：You must specify 'job' to install a new cron job or variable；  
 
 **原因**：  
 1. Ansible的幂等性原则：  
