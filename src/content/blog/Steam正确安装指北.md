@@ -2,7 +2,7 @@
 title: "Steam正确安装指北"
 description: "Steam正确食用方法"
 pubDate: "Jul 20 2024"
-image: "https://s21.ax1x.com/2025/04/26/pETV3TJ.png"
+image: "https://s1.imagehub.cc/images/2025/07/25/0f43b0f9eeb38faf2ef3602cca8ceb9f.png"
 categories:
   - tech
 tags:
