@@ -2,7 +2,7 @@
 title: "Windows11隐藏桌面“了解此图片”图标"
 description: "So Microsoft F**k You"
 pubDate: "Aug 22 2024"
-image: "https://s21.ax1x.com/2025/04/26/pETVNSx.png"
+image: "https://s1.imagehub.cc/images/2025/07/25/712034c3a316f2037a50b65b672e332c.png"
 categories:
   - tech
 tags:
