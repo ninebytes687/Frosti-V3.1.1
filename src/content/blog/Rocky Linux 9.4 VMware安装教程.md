@@ -2,7 +2,7 @@
 title: "Rocky Linux 9.4 VMware安装教程"
 description: "仅限amdx86_64CPU架构"
 pubDate: "Nov 3 2024"
-image: "https://s21.ax1x.com/2025/01/16/pEF5GMd.jpg"
+image: "https://s1.imagehub.cc/images/2025/07/25/343a082f9edf9cc851f3e88aba93f42e.jpg"
 categories:
   - tech
 tags:
