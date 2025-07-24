@@ -2,7 +2,7 @@
 title: "ZeroSSL申请公网IP SSL证书及部署"
 description: "提升数据安全性"
 pubDate: "Apr 19 2025"
-image: "https://s21.ax1x.com/2025/04/19/pE4u4Z4.png"
+image: "https://s1.imagehub.cc/images/2025/07/25/c3651206789a48b75d1597e3ead666bd.png"
 categories:
   - tech
 tags:
