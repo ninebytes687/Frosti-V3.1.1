@@ -86,9 +86,8 @@ user:
         ariaLabel: BiliBili
         title: BiliBili
         svg: "ri:bilibili-line"
-      - href: "#"
-        ariaLabel: X(twitter)
-        title: X(twitter)
+      - ariaLabel: X(Disable)
+        title: X(Disable)
         svg: "ri:twitter-line"
   footer:
     social:
