@@ -22,6 +22,9 @@ const { title, image, headings = [], showTOC = false } = Astro.props;
     <Header description={SITE_DESCRIPTION} favicon={SITE_FAVICON} image={image} />
     <title>{`${title} - ${SITE_TAB}`}</title>
 
+    <!-- Umami Analytics -->
+    <script defer src="https://cloud.umami.is/script.js" data-website-id="9391de37-6e48-46a4-bbc1-213d9216b628"></script>
+
     <!-- Initial theme setup on first load -->
     <script define:vars={{ SITE_THEME }} is:inline>
       (function () {
