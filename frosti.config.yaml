@@ -63,7 +63,12 @@ site:
     - id: status
       text: Status
       href: "https://stats.uptimerobot.com/WeknJyR7fh"
-      svg: "material-symbols:monitor-heart-outline-rounded"  # 使用心跳监测图标
+      svg: "material-symbols:monitor-heart-outline-rounded"
+      target: _blank
+    - id: umami
+      text: Umami
+      href: "https://us.umami.is/share/NZe8QtDUNhgT1Ojz/blog.ninebytes.top"
+      svg: "material-symbols:analytics-outline-rounded"
       target: _blank
     - id: contact
       text: Contact
