@@ -6,7 +6,7 @@ image: "https://s1.imagehub.cc/images/2026/03/14/b59fd4ea814f2d93b84cd2649162ae5
 categories:
   - tech
 tags:
-  - Keep
+  - Counter-Strike
 ---
 ![Counter strike Global Offensive Screenshot 2026.03.05 15.46.12.28](https://s1.imagehub.cc/images/2026/03/14/71a96f46fe7432ec41214cbdf3d599d4.png)
 ![Counter strike Global Offensive Screenshot 2026.03.05 15.46.34.42](https://s1.imagehub.cc/images/2026/03/14/46f1962f61c64b16841547880c6e71d8.png)
