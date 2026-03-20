@@ -4,7 +4,7 @@ description: ""
 pubDate: "Mar 5 2026"
 image: "https://s1.imagehub.cc/images/2026/03/14/b59fd4ea814f2d93b84cd2649162ae5c.png"
 categories:
-  - tech
+  - life
 tags:
   - Counter-Strike
 ---
