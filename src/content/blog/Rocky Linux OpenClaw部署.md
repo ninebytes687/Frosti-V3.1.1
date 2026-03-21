@@ -17,7 +17,7 @@ tags:
   - 文中代码与链接可能因时间推移或不可抗力失效，请结合实际环境运行调试！
   - 如需转载或借鉴，请注明出处并附上本文博客链接！
 
-首先更新系统：`sudo dnf update -y`
+首先更新软件包：`sudo dnf update -y`
 ``` bash
 [ninebytes@localhost ~]$ sudo dnf update -y
 Rocky Linux 9 - BaseOS                                                                     1.6 MB/s | 4.1 kB     00:00    
@@ -26,8 +26,9 @@ Dependencies resolved.
 Nothing to do.
 Complete!
 ```
-由于OpenClaw依赖于Node.js 22，所以我们先来安装Node.js 22。  
-下载并执行NVM v0.40.3的安装脚本，实现Node.js版本管理器安装：`curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash`
+由于OpenClaw依赖于Node.js，所以我们先来安装Node.js。  
+下载并执行NVM v0.40.3的安装脚本：`curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash`  
+若github拉取慢或访问不了，可以使用我转载的install_v0.40.3.sh文件：`curl -o- https://blog.ninebytes.top/nvm-sh/install_v0.40.3.sh`
 ``` bash
 [ninebytes@localhost ~]$ curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
