@@ -304,7 +304,7 @@ OpenClaw 2026.3.13 (61d171a)
 ◇  Configure skills now? (recommended)
 │  ○ Yes / ● No
 ```
-这一步是让你安装各类第三方技能的依赖，这些技能大多是小众场景（比如1password、博客监控、喜马拉雅等），对核心AI对话或代码能力没有影响。直接选`Skip for now`跳过即可。
+这一步是让你安装各类第三方技能的依赖，这些技能大多是小众场景（比如1password、博客监控、喜马拉雅等），对核心AI对话或代码能力没有影响。直接选`Skip for now`跳过即可。  
 使用上下方向键将光标放到`Skip for now`上，按下空格选中，此时前面的白方框会变黑，然后按下回车键即可。
 ``` bash
 ◆  Install missing skill dependencies
@@ -492,6 +492,8 @@ Health check failed: gateway closed (1006 abnormal closure (no close frame)): no
 用SSH隧道打通虚拟机和宿主机，实现宿主机浏览器访问OpenClaw Web UI  
 `ssh -N -L 127.0.0.1:18789:127.0.0.1:18789 虚拟机用户名@虚拟机IP`  
 
+- 注意：打通后还需要保持PowerShell窗口运行！
+
 - -N：只建立隧道，不登录  
 - -L：本地端口转发
 
@@ -506,7 +508,7 @@ ninebytes@192.168.201.11's password:
 | （光标会持续闪烁）
 ```
 SSL隧道打通后，然后访问刚刚输出日志给出来的链接：`http://127.0.0.1:18789/#token=************`  
-实际操作时token会正常显示，我为了防止token泄露替换为了星号  
+实际操作时token会正常显示，我为了防止token泄露替换为了星号。  
 若忘记你的API KEY，可以去你的大模型供应商后台获取或者使用：`cat ~/.openclaw/agents/main/agent/auth-profiles.json`命令查看。
 ``` bash
 [ninebytes@localhost ~]$ cat ~/.openclaw/agents/main/agent/auth-profiles.json
