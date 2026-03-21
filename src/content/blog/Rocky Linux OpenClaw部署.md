@@ -28,7 +28,7 @@ Complete!
 ```
 由于OpenClaw依赖于Node.js，所以我们先来安装Node.js。  
 下载并执行NVM v0.40.3的安装脚本：`curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash`  
-若github拉取慢或访问不了，可以使用我转载的install_v0.40.3.sh文件：`curl -o- https://blog.ninebytes.top/nvm-sh/install_v0.40.3.sh`
+若github拉取慢或访问不了，可以使用我转载的install_v0.40.3.sh文件：`curl -o- https://blog.ninebytes.top/nvm-sh/install_v0.40.3.sh | bash`
 ``` bash
 [ninebytes@localhost ~]$ curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
