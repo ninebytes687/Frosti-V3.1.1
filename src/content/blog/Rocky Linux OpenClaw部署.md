@@ -47,9 +47,10 @@ export NVM_DIR="$HOME/.nvm"
 然后临时加载NVM到当前终端会话中，让你能立即使用NVM命令则无需重启终端：`\. "$HOME/.nvm/nvm.sh"`
 ``` bash
 [ninebytes@server ~]$ \. "$HOME/.nvm/nvm.sh"
-``` bash
-若想永久生效，需把这句命令添加到Shell配置文件中：`echo '\. "$HOME/.nvm/nvm.sh"' >> ~/.bashrc && source ~/.bashrc`
 ```
+
+- 提示：若想永久生效，需把这句命令添加到Shell配置文件中：`echo '\. "$HOME/.nvm/nvm.sh"' >> ~/.bashrc && source ~/.bashrc`  
+
 下载编译并安装Node.js 24.x最新版，同时会配套安装对应的NPM：`nvm install 24`
 ``` bash
 [ninebytes@localhost ~]$ nvm install 24
@@ -95,7 +96,7 @@ Complete!
 git version 2.43.0
 ```
 安装OpenClaw：`npm i -g openclaw --registry=https://registry.npmmirror.com --verbose`  
-指定从阿里NPM仓库下载OpenClaw，并输出每一步的详细日志，若不想输出日志，去掉`--verbose`即可
+指定从阿里NPM仓库下载OpenClaw，并输出每一步的详细日志，若不想输出日志，去掉`--verbose`即可。
 ``` bash
 [ninebytes@localhost ~]$ npm i -g openclaw --registry=https://registry.npmmirror.com --verbose
 npm verbose cli /home/ninebytes/.nvm/versions/node/v24.14.0/bin/node /home/ninebytes/.nvm/versions/node/v24.14.0/bin/npm
@@ -109,7 +110,9 @@ npm http fetch GET 200 https://registry.npmmirror.com/openclaw 329ms (cache miss
 npm http fetch GET 200 https://registry.npmmirror.com/@agentclientprotocol%2fsdk 213ms (cache miss)
 npm http fetch GET 200 https://registry.npmmirror.com/@grammyjs%2frunner 249ms (cache miss)
 npm info run protobufjs@7.5.4 postinstall { code: 0, signal: null }
+
 ---省略1000多行输出日志---
+
 added 539 packages in 2m
 
 89 packages are looking for funding
@@ -121,12 +124,12 @@ npm verbose npm  v11.9.0
 npm verbose exit 0
 npm info ok
 ```
-使用`openclaw --version`验证OpenClaw是否安装成功
+使用`openclaw --version`验证OpenClaw是否安装成功。
 ``` bash
 [ninebytes@localhost ~]$ openclaw --version
 OpenClaw 2026.3.13 (61d171a)
 ```
-然后使用`openclaw onboard`开始配置OpenClaw
+然后使用`openclaw onboard`开始配置OpenClaw。
 ``` bash
 [ninebytes@localhost ~]$ openclaw onboard
 
@@ -183,10 +186,10 @@ OpenClaw 2026.3.13 (61d171a)
 │  ○ Yes / ● No
 └
 ```
-- QuickStart：快速完成基础配置，后续可以用 openclaw configure 命令精细调整模型、权限等细节，适合快速上手
-- Manual：手动配置，需要一步步填写所有参数，适合有经验的用户或需要定制化部署的场景
+- QuickStart：快速完成基础配置，后续可以用 openclaw configure 命令精细调整模型、权限等细节，适合快速上手。
+- Manual：手动配置，需要一步步填写所有参数，适合有经验的用户或需要定制化部署的场景。
 
-所以我们直接选择QuickStart即可
+所以我们直接选择QuickStart即可。
  ``` bash
 ◆  Onboarding mode
 │  ● QuickStart (Configure details later via openclaw configure.)
@@ -489,14 +492,13 @@ Health check failed: gateway closed (1006 abnormal closure (no close frame)): no
 │
 └  Onboarding complete. Use the dashboard link above to control OpenClaw.
 ```
-由于使用的是虚拟机，还需要用宿主机使用浏览器去访问WEB UI  
-用SSH隧道打通虚拟机和宿主机，实现宿主机浏览器访问OpenClaw Web UI  
+由于使用的是虚拟机部署，还需要用SSH隧道打通虚拟机和宿主机，实现宿主机浏览器访问OpenClaw Web UI。
 `ssh -N -L 127.0.0.1:18789:127.0.0.1:18789 虚拟机用户名@虚拟机IP`  
-
-- 注意：打通后还需要保持PowerShell窗口运行！
 
 - -N：只建立隧道，不登录  
 - -L：本地端口转发
+
+- 注意：打通后仍需要保持PowerShell窗口运行！
 
 ``` PowerShell
 Windows PowerShell
@@ -509,7 +511,7 @@ ninebytes@192.168.201.11's password:
 | （光标会持续闪烁）
 ```
 SSL隧道打通后，然后访问刚刚输出日志给出来的链接：`http://127.0.0.1:18789/#token=************`  
-实际操作时token会正常显示，我为了防止token泄露替换为了星号。  
+- 实际操作时token会正常显示，我为了防止token泄露替换为了星号。  
 若忘记你的API KEY，可以去你的大模型供应商后台获取或者使用：`cat ~/.openclaw/agents/main/agent/auth-profiles.json`命令查看。
 ``` bash
 [ninebytes@localhost ~]$ cat ~/.openclaw/agents/main/agent/auth-profiles.json
