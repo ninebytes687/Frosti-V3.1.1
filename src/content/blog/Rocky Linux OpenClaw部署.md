@@ -498,8 +498,7 @@ Health check failed: gateway closed (1006 abnormal closure (no close frame)): no
 - -N：只建立隧道，不登录  
 - -L：本地端口转发
 
-- 注意：打通后仍需要保持PowerShell窗口运行！
-
+注意：打通后仍需要保持PowerShell窗口运行！
 ``` PowerShell
 Windows PowerShell
 版权所有（C） Microsoft Corporation。保留所有权利。
@@ -510,8 +509,10 @@ PS C:\Users\NineBytes> ssh -N -L 18789:127.0.0.1:18789 ninebytes@192.168.201.11
 ninebytes@192.168.201.11's password:
 | （光标会持续闪烁）
 ```
-SSL隧道打通后，然后访问刚刚输出日志给出来的链接：`http://127.0.0.1:18789/#token=************`  
+SSL隧道打通后，然后访问刚刚输出日志给出来的链接：`http://127.0.0.1:18789/#token=******`  
+
 - 实际操作时token会正常显示，我为了防止token泄露替换为了星号。  
+
 若忘记你的API KEY，可以去你的大模型供应商后台获取或者使用：`cat ~/.openclaw/agents/main/agent/auth-profiles.json`命令查看。
 ``` bash
 [ninebytes@localhost ~]$ cat ~/.openclaw/agents/main/agent/auth-profiles.json
