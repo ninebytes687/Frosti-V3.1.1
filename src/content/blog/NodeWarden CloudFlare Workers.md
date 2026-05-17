@@ -2,7 +2,7 @@
 title: "Cloudflare Worker部署NodeWarden"
 description: "兼容Bitwarden客户端的个人专属自建密码管理服务端"
 pubDate: "May 16 2026"
-image: "https://s1.imagehub.cc/images/2026/05/17/c5033e090909577df25f73ee264a62d4.jpg"
+image: "https://s1.imagehub.cc/images/2026/05/17/2b72d679af4e630887149aece4fdfc31.jpg"
 categories:
   - tech
 tags:
